@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------------------
+// Core domain models — aligned with backend Prisma schema
+// ---------------------------------------------------------------------------
+
 export interface User {
   id: string;
   email: string;
@@ -20,6 +24,10 @@ export interface Couple {
   createdAt: string;
 }
 
+// ---------------------------------------------------------------------------
+// Daily question / answer — matches ContentService.getDailyQuestion response
+// ---------------------------------------------------------------------------
+
 export interface DailyQuestion {
   status: 'OK' | 'NO_COUPLE';
   message?: string;
@@ -39,27 +47,43 @@ export interface DailyQuestion {
     hasAnswered: boolean;
   };
   isRevealed: boolean;
-  answers: Array<{
-    id: string;
-    userId: string;
-    text: string;
-    createdAt: string;
-  }>;
+  answers: Answer[];
+}
+
+export interface Answer {
+  id: string;
+  userId: string;
+  text: string;
+  createdAt: string;
 }
 
 export interface AnswerResult {
   status: 'WAITING_FOR_PARTNER' | 'REVEALED';
   answerId: string;
-  answers?: Array<{
-    id: string;
-    userId: string;
-    text: string;
-    createdAt: string;
-  }>;
+  answers?: Answer[];
 }
+
+// ---------------------------------------------------------------------------
+// API envelope
+// ---------------------------------------------------------------------------
 
 export interface ApiResponse<T> {
   success: boolean;
   data: T;
   error: string | null;
+}
+
+// ---------------------------------------------------------------------------
+// Socket event payloads
+// ---------------------------------------------------------------------------
+
+export interface PartnerAnsweredPayload {
+  questionId: string;
+  bothAnswered: boolean;
+  timestamp: number;
+}
+
+export interface AnswersRevealedPayload {
+  questionId: string;
+  timestamp: number;
 }
