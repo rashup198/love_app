@@ -1,0 +1,578 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// ENUMS
+// ─────────────────────────────────────────────────────────────────────────────
+
+enum AuthProvider {
+  EMAIL
+  GOOGLE
+  APPLE
+}
+
+enum OtpPurpose {
+  LOGIN
+  VERIFY_EMAIL
+  RESET_PASSWORD
+}
+
+enum Gender {
+  MALE
+  FEMALE
+  NON_BINARY
+  PREFER_NOT_TO_SAY
+}
+
+enum CoupleStatus {
+  PENDING
+  ACTIVE
+  PAUSED
+  DISSOLVED
+}
+
+enum InviteStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
+  EXPIRED
+  CANCELLED
+}
+
+enum QuestionCategory {
+  RELATIONSHIP
+  INTIMACY
+  FUTURE_PLANS
+  FUN
+  DEEP_TALK
+  DAILY_CHECK_IN
+  CHALLENGE
+  GRATITUDE
+}
+
+enum ContentTier {
+  FREE
+  PREMIUM
+}
+
+enum DailyQuestionStatus {
+  PENDING
+  PARTIALLY_ANSWERED
+  COMPLETED
+  REVEALED
+  EXPIRED
+}
+
+enum MoodLevel {
+  VERY_LOW
+  LOW
+  NEUTRAL
+  HIGH
+  VERY_HIGH
+}
+
+enum ReactionType {
+  LOVE
+  LAUGH
+  SURPRISE
+  SAD
+  FIRE
+  HUG
+}
+
+enum NotificationType {
+  PARTNER_ANSWERED
+  DAILY_QUESTION_READY
+  STREAK_REMINDER
+  STREAK_BROKEN
+  MOOD_LOGGED
+  INVITE_RECEIVED
+  INVITE_ACCEPTED
+  SUBSCRIPTION_EXPIRING
+  SYSTEM
+}
+
+enum NotificationChannel {
+  PUSH
+  IN_APP
+  EMAIL
+}
+
+enum DeliveryStatus {
+  QUEUED
+  SENT
+  DELIVERED
+  FAILED
+  READ
+}
+
+enum SubscriptionTier {
+  FREE
+  PLUS
+  PREMIUM
+}
+
+enum SubscriptionStatus {
+  ACTIVE
+  PAST_DUE
+  CANCELLED
+  EXPIRED
+  TRIALING
+}
+
+enum PaymentPlatform {
+  APPLE
+  GOOGLE
+  STRIPE
+  MANUAL
+}
+
+enum DevicePlatform {
+  IOS
+  ANDROID
+  WEB
+}
+
+enum MessageType {
+  TEXT
+  IMAGE
+  EMOJI
+  VOICE
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// AUTH & SESSIONS
+// ─────────────────────────────────────────────────────────────────────────────
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  phone     String?  @unique
+  password  String?
+  provider  AuthProvider @default(EMAIL)
+
+  isEmailVerified Boolean @default(false)
+  isOnboarded     Boolean @default(false)
+
+  lastActiveAt DateTime?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  deletedAt    DateTime?
+
+  profile          Profile?
+  sessions         Session[]
+  otps             Otp[]
+  refreshTokens    RefreshToken[]
+  devices          Device[]
+
+  coupleAsUserA    Couple?        @relation("CoupleUserA")
+  coupleAsUserB    Couple?        @relation("CoupleUserB")
+  sentInvites      CoupleInvite[] @relation("InviteSender")
+  receivedInvites  CoupleInvite[] @relation("InviteReceiver")
+
+  answers          Answer[]
+  reactions        Reaction[]
+  moodLogs         MoodLog[]
+  notifications    Notification[]
+  sentMessages     Message[]      @relation("MessageSender")
+
+  subscription     Subscription?
+
+  @@index([email])
+  @@index([deletedAt])
+  @@map("users")
+}
+
+model Profile {
+  id          String   @id @default(cuid())
+  userId      String   @unique
+  displayName String
+  avatarUrl   String?
+  dateOfBirth DateTime?
+  gender      Gender?
+  bio         String?  @db.VarChar(500)
+  timezone    String   @default("UTC")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("profiles")
+}
+
+model Session {
+  id        String   @id @default(cuid())
+  userId    String
+  deviceId  String?
+  ipAddress String?
+  userAgent String?
+
+  isActive    Boolean  @default(true)
+  lastSeenAt  DateTime @default(now())
+  expiresAt   DateTime
+  createdAt   DateTime @default(now())
+
+  user   User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  device Device? @relation(fields: [deviceId], references: [id], onDelete: SetNull)
+
+  @@index([userId, isActive])
+  @@index([expiresAt])
+  @@map("sessions")
+}
+
+model RefreshToken {
+  id          String   @id @default(cuid())
+  userId      String
+  tokenHash   String   @unique
+  familyId    String
+  isRevoked   Boolean  @default(false)
+
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([familyId])
+  @@index([expiresAt])
+  @@map("refresh_tokens")
+}
+
+model Otp {
+  id        String     @id @default(cuid())
+  userId    String
+  code      String
+  purpose   OtpPurpose
+  attempts  Int        @default(0)
+  maxAttempts Int      @default(5)
+  isUsed    Boolean    @default(false)
+
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, purpose, isUsed])
+  @@index([expiresAt])
+  @@map("otps")
+}
+
+model Device {
+  id          String         @id @default(cuid())
+  userId      String
+  platform    DevicePlatform
+  deviceToken String?
+  fcmToken    String?
+  deviceModel String?
+  osVersion   String?
+  appVersion  String?
+
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user     User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  sessions Session[]
+
+  @@unique([userId, deviceToken])
+  @@index([userId, isActive])
+  @@map("devices")
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// COUPLES
+// ─────────────────────────────────────────────────────────────────────────────
+
+model Couple {
+  id       String       @id @default(cuid())
+  userAId  String       @unique
+  userBId  String       @unique
+  status   CoupleStatus @default(ACTIVE)
+
+  relationshipStartDate DateTime?
+  currentStreak         Int       @default(0)
+  longestStreak         Int       @default(0)
+  lastInteractionDate   DateTime?
+  totalInteractions     Int       @default(0)
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+
+  userA User @relation("CoupleUserA", fields: [userAId], references: [id], onDelete: Cascade)
+  userB User @relation("CoupleUserB", fields: [userBId], references: [id], onDelete: Cascade)
+
+  dailyQuestions DailyQuestion[]
+  answers        Answer[]
+  messages       Message[]
+
+  @@index([status])
+  @@index([deletedAt])
+  @@map("couples")
+}
+
+model CoupleInvite {
+  id         String       @id @default(cuid())
+  senderId   String
+  receiverId String?
+  inviteCode String       @unique
+  status     InviteStatus @default(PENDING)
+
+  expiresAt   DateTime
+  respondedAt DateTime?
+  createdAt   DateTime  @default(now())
+
+  sender   User  @relation("InviteSender", fields: [senderId], references: [id], onDelete: Cascade)
+  receiver User? @relation("InviteReceiver", fields: [receiverId], references: [id], onDelete: SetNull)
+
+  @@index([inviteCode])
+  @@index([senderId, status])
+  @@index([receiverId, status])
+  @@map("couple_invites")
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// CONTENT
+// ─────────────────────────────────────────────────────────────────────────────
+
+model Question {
+  id       String           @id @default(cuid())
+  text     String           @db.VarChar(1000)
+  category QuestionCategory
+  tier     ContentTier      @default(FREE)
+
+  isActive      Boolean @default(true)
+  sortOrder     Int     @default(0)
+  usageCount    Int     @default(0)
+  avgRating     Float   @default(0)
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+
+  dailyQuestions DailyQuestion[]
+
+  @@index([category, tier, isActive])
+  @@index([isActive, usageCount])
+  @@index([deletedAt])
+  @@map("questions")
+}
+
+model DailyQuestion {
+  id         String              @id @default(cuid())
+  coupleId   String
+  questionId String
+  assignedDate DateTime          @db.Date
+  status     DailyQuestionStatus @default(PENDING)
+
+  userAAnsweredAt DateTime?
+  userBAnsweredAt DateTime?
+  revealedAt      DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  couple   Couple   @relation(fields: [coupleId], references: [id], onDelete: Cascade)
+  question Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  answers  Answer[]
+
+  @@unique([coupleId, assignedDate])
+  @@index([coupleId, status])
+  @@index([assignedDate])
+  @@map("daily_questions")
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// INTERACTIONS
+// ─────────────────────────────────────────────────────────────────────────────
+
+model Answer {
+  id              String @id @default(cuid())
+  dailyQuestionId String
+  coupleId        String
+  userId          String
+  text            String @db.VarChar(2000)
+
+  isRevealed Boolean @default(false)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  dailyQuestion DailyQuestion @relation(fields: [dailyQuestionId], references: [id], onDelete: Cascade)
+  couple        Couple        @relation(fields: [coupleId], references: [id], onDelete: Cascade)
+  user          User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  reactions     Reaction[]
+
+  @@unique([dailyQuestionId, userId])
+  @@index([coupleId, createdAt])
+  @@index([userId])
+  @@map("answers")
+}
+
+model Reaction {
+  id       String       @id @default(cuid())
+  answerId String
+  userId   String
+  type     ReactionType
+
+  createdAt DateTime @default(now())
+
+  answer Answer @relation(fields: [answerId], references: [id], onDelete: Cascade)
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([answerId, userId])
+  @@index([answerId])
+  @@map("reactions")
+}
+
+model Message {
+  id       String      @id @default(cuid())
+  coupleId String
+  senderId String
+  type     MessageType @default(TEXT)
+  content  String      @db.VarChar(5000)
+
+  isRead    Boolean   @default(false)
+  readAt    DateTime?
+  createdAt DateTime  @default(now())
+  deletedAt DateTime?
+
+  couple Couple @relation(fields: [coupleId], references: [id], onDelete: Cascade)
+  sender User   @relation("MessageSender", fields: [senderId], references: [id], onDelete: Cascade)
+
+  @@index([coupleId, createdAt])
+  @@index([senderId])
+  @@index([deletedAt])
+  @@map("messages")
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// MOOD TRACKING
+// ─────────────────────────────────────────────────────────────────────────────
+
+model MoodLog {
+  id     String    @id @default(cuid())
+  userId String
+  mood   MoodLevel
+  note   String?   @db.VarChar(500)
+  date   DateTime  @db.Date
+
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, date])
+  @@index([userId, date])
+  @@map("mood_logs")
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// NOTIFICATIONS
+// ─────────────────────────────────────────────────────────────────────────────
+
+model Notification {
+  id      String           @id @default(cuid())
+  userId  String
+  type    NotificationType
+  channel NotificationChannel @default(PUSH)
+
+  title   String           @db.VarChar(200)
+  body    String           @db.VarChar(1000)
+  data    Json?
+
+  status    DeliveryStatus @default(QUEUED)
+  sentAt    DateTime?
+  readAt    DateTime?
+  failedAt  DateTime?
+  failReason String?
+
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, status])
+  @@index([userId, type, createdAt])
+  @@index([status, createdAt])
+  @@map("notifications")
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// SUBSCRIPTIONS & BILLING
+// ─────────────────────────────────────────────────────────────────────────────
+
+model SubscriptionPlan {
+  id               String           @id @default(cuid())
+  tier             SubscriptionTier @unique
+  name             String
+  description      String           @db.VarChar(500)
+  monthlyPriceCents Int
+  yearlyPriceCents  Int
+
+  maxQuestionsPerDay   Int @default(1)
+  hasCustomQuestions    Boolean @default(false)
+  hasMoodInsights      Boolean @default(false)
+  hasAdvancedAnalytics Boolean @default(false)
+  hasPrioritySupport   Boolean @default(false)
+
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  subscriptions Subscription[]
+
+  @@map("subscription_plans")
+}
+
+model Subscription {
+  id       String             @id @default(cuid())
+  userId   String             @unique
+  planId   String
+  status   SubscriptionStatus @default(ACTIVE)
+  platform PaymentPlatform
+
+  currentPeriodStart DateTime
+  currentPeriodEnd   DateTime
+  cancelledAt        DateTime?
+  trialEndsAt        DateTime?
+
+  platformSubscriptionId String?
+  platformCustomerId     String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user     User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  plan     SubscriptionPlan   @relation(fields: [planId], references: [id], onDelete: Restrict)
+  receipts PlatformReceipt[]
+
+  @@index([userId, status])
+  @@index([status, currentPeriodEnd])
+  @@index([platformSubscriptionId])
+  @@map("subscriptions")
+}
+
+model PlatformReceipt {
+  id             String          @id @default(cuid())
+  subscriptionId String
+  platform       PaymentPlatform
+  receiptData    String          @db.Text
+  transactionId  String          @unique
+  amountCents    Int
+  currency       String          @default("USD") @db.VarChar(3)
+
+  isValid   Boolean  @default(true)
+  verifiedAt DateTime?
+  createdAt DateTime @default(now())
+
+  subscription Subscription @relation(fields: [subscriptionId], references: [id], onDelete: Cascade)
+
+  @@index([subscriptionId])
+  @@index([transactionId])
+  @@map("platform_receipts")
+}
