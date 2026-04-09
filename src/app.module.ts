@@ -2,7 +2,6 @@ import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { APP_GUARD, APP_INTERCEPTOR, APP_FILTER } from '@nestjs/core';
 import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
-import { JwtModule } from '@nestjs/jwt';
 
 import { PrismaModule } from './prisma/prisma.module';
 import { RedisModule } from './redis/redis.module';
@@ -39,15 +38,7 @@ import { GlobalExceptionFilter } from './common/filters/global-exception.filter'
       inject: [ConfigService],
     }),
 
-    JwtModule.registerAsync({
-      imports: [ConfigModule],
-      useFactory: (config: ConfigService) => ({
-        secret: config.getOrThrow<string>('JWT_SECRET'),
-        signOptions: { expiresIn: config.get<string>('JWT_ACCESS_EXPIRY', '15m') as any },
-      }),
-      inject: [ConfigService],
-      global: true,
-    }),
+
 
     PrismaModule,
     RedisModule,

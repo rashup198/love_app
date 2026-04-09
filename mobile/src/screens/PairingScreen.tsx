@@ -51,7 +51,7 @@ export default function PairingScreen() {
   const fetchInviteCode = useCallback(async () => {
     setCodeLoadError(null);
     try {
-      const result = await api.post<InviteCodeResponse>('/auth/invite-code');
+      const result = await api.post<InviteCodeResponse>('/couples/invite-code');
       setInviteCode(result.inviteCode);
     } catch (err: any) {
       setCodeLoadError(err.message || 'Failed to load invite code');

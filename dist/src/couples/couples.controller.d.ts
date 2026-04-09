@@ -1,9 +1,11 @@
 import { CouplesService } from './couples.service';
+import { InviteService } from './invite.service';
 import { JwtPayload } from '../common/decorators/current-user.decorator';
 import { JoinCoupleDto, UpdateRelationshipDto } from './dto/couples.dto';
 export declare class CouplesController {
     private readonly couplesService;
-    constructor(couplesService: CouplesService);
+    private readonly inviteService;
+    constructor(couplesService: CouplesService, inviteService: InviteService);
     getCouple(user: JwtPayload): Promise<{
         id: string;
         status: import(".prisma/client").$Enums.CoupleStatus;
@@ -25,19 +27,23 @@ export declare class CouplesController {
         currentStreak: number;
         createdAt: Date;
     }>;
+    createInvite(user: JwtPayload): Promise<{
+        inviteCode: string;
+        expiresAt: Date;
+    }>;
     updateRelationshipDate(user: JwtPayload, dto: UpdateRelationshipDto): Promise<{
         id: string;
         createdAt: Date;
         updatedAt: Date;
         deletedAt: Date | null;
-        userAId: string;
-        userBId: string;
         status: import(".prisma/client").$Enums.CoupleStatus;
         relationshipStartDate: Date | null;
         currentStreak: number;
         longestStreak: number;
         lastInteractionDate: Date | null;
         totalInteractions: number;
+        userAId: string;
+        userBId: string;
     }>;
     dissolveCouple(user: JwtPayload): Promise<{
         dissolved: boolean;

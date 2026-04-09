@@ -9,7 +9,6 @@ export declare class SubscriptionsController {
         id: string;
         createdAt: Date;
         updatedAt: Date;
-        isActive: boolean;
         tier: import(".prisma/client").$Enums.SubscriptionTier;
         description: string;
         monthlyPriceCents: number;
@@ -19,6 +18,7 @@ export declare class SubscriptionsController {
         hasMoodInsights: boolean;
         hasAdvancedAnalytics: boolean;
         hasPrioritySupport: boolean;
+        isActive: boolean;
     }[]>;
     getSubscription(user: JwtPayload): Promise<{
         tier: "FREE";
@@ -46,8 +46,8 @@ export declare class SubscriptionsController {
         createdAt: Date;
         updatedAt: Date;
         userId: string;
-        status: import(".prisma/client").$Enums.SubscriptionStatus;
         planId: string;
+        status: import(".prisma/client").$Enums.SubscriptionStatus;
         platform: import(".prisma/client").$Enums.PaymentPlatform;
         currentPeriodStart: Date;
         currentPeriodEnd: Date;

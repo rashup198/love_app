@@ -31,14 +31,14 @@ export declare class CouplesService {
         createdAt: Date;
         updatedAt: Date;
         deletedAt: Date | null;
-        userAId: string;
-        userBId: string;
         status: import(".prisma/client").$Enums.CoupleStatus;
         relationshipStartDate: Date | null;
         currentStreak: number;
         longestStreak: number;
         lastInteractionDate: Date | null;
         totalInteractions: number;
+        userAId: string;
+        userBId: string;
     }>;
     dissolveCouple(userId: string): Promise<{
         dissolved: boolean;

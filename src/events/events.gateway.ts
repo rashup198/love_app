@@ -10,7 +10,7 @@ import {
 } from '@nestjs/websockets';
 import { Logger } from '@nestjs/common';
 import { Server, Socket } from 'socket.io';
-import { JwtService } from '@nestjs/jwt';
+import { verifyToken } from '@clerk/clerk-sdk-node';
 import { ConfigService } from '@nestjs/config';
 import { PrismaService } from '../prisma/prisma.service';
 import { RedisService } from '../redis/redis.service';
@@ -48,7 +48,6 @@ export class EventsGateway
   private deduplicationCleanupInterval: ReturnType<typeof setInterval>;
 
   constructor(
-    private readonly jwt: JwtService,
     private readonly config: ConfigService,
     private readonly prisma: PrismaService,
     private readonly redis: RedisService,
@@ -77,7 +76,7 @@ export class EventsGateway
         return;
       }
 
-      const payload = this.verifyToken(token);
+      const payload = await this.verifyToken(token);
 
       if (!payload || !payload.sub) {
         this.logger.warn(`Connection rejected: invalid token (${client.id})`);
@@ -254,10 +253,11 @@ export class EventsGateway
     return null;
   }
 
-  private verifyToken(token: string): any | null {
+  private async verifyToken(token: string): Promise<any | null> {
     try {
-      return this.jwt.verify(token, {
-        secret: this.config.getOrThrow<string>('JWT_SECRET'),
+      return await verifyToken(token, {
+        secretKey: this.config.get<string>('CLERK_SECRET_KEY'),
+        issuer: null,
       });
     } catch {
       return null;

@@ -76,7 +76,7 @@ export default function DailyPromptScreen() {
 
       setError(null);
     } catch (err: any) {
-      setError(err.message || 'Failed to load today's question');
+      setError(err.message || "Failed to load today's question");
       setPhase('error');
     }
   }, []);
@@ -178,7 +178,7 @@ export default function DailyPromptScreen() {
   const renderLoading = () => (
     <View style={styles.centered}>
       <ActivityIndicator size="large" color="#E8567F" />
-      <Text style={styles.loadingText}>Loading today's question…</Text>
+      <Text style={styles.loadingText}>Loading today&apos;s question...</Text>
     </View>
   );
 
@@ -286,7 +286,7 @@ export default function DailyPromptScreen() {
         <ActivityIndicator size="small" color="#E8567F" style={styles.waitingSpinner} />
         <Text style={styles.waitingTitle}>Waiting for your partner…</Text>
         <Text style={styles.waitingSubtitle}>
-          You'll see both answers once your partner responds.
+          You will see both answers once your partner responds.
           {'\n'}Pull down to refresh.
         </Text>
       </View>

@@ -1,6 +1,5 @@
 import { OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
-import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { PrismaService } from '../prisma/prisma.service';
 import { RedisService } from '../redis/redis.service';
@@ -9,7 +8,6 @@ interface AuthenticatedSocket extends Socket {
     coupleId?: string;
 }
 export declare class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
-    private readonly jwt;
     private readonly config;
     private readonly prisma;
     private readonly redis;
@@ -18,7 +16,7 @@ export declare class EventsGateway implements OnGatewayInit, OnGatewayConnection
     private readonly connectedUsers;
     private readonly processedMessages;
     private deduplicationCleanupInterval;
-    constructor(jwt: JwtService, config: ConfigService, prisma: PrismaService, redis: RedisService);
+    constructor(config: ConfigService, prisma: PrismaService, redis: RedisService);
     afterInit(): Promise<void>;
     handleConnection(client: AuthenticatedSocket): Promise<void>;
     handleDisconnect(client: AuthenticatedSocket): Promise<void>;

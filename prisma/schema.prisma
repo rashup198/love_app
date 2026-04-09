@@ -1,5 +1,6 @@
 generator client {
-  provider = "prisma-client-js"
+  provider   = "prisma-client-js"
+  engineType = "library"
 }
 
 datasource db {
@@ -10,17 +11,7 @@ datasource db {
 // ENUMS
 // ─────────────────────────────────────────────────────────────────────────────
 
-enum AuthProvider {
-  EMAIL
-  GOOGLE
-  APPLE
-}
 
-enum OtpPurpose {
-  LOGIN
-  VERIFY_EMAIL
-  RESET_PASSWORD
-}
 
 enum Gender {
   MALE
@@ -150,14 +141,9 @@ enum MessageType {
 // ─────────────────────────────────────────────────────────────────────────────
 
 model User {
-  id        String   @id @default(cuid())
+  id        String   @id // Maps to Clerk User ID
   email     String   @unique
-  phone     String?  @unique
-  password  String?
-  provider  AuthProvider @default(EMAIL)
-
-  isEmailVerified Boolean @default(false)
-  isOnboarded     Boolean @default(false)
+  isOnboarded Boolean @default(false)
 
   lastActiveAt DateTime?
   createdAt    DateTime  @default(now())
@@ -165,9 +151,6 @@ model User {
   deletedAt    DateTime?
 
   profile          Profile?
-  sessions         Session[]
-  otps             Otp[]
-  refreshTokens    RefreshToken[]
   devices          Device[]
 
   coupleAsUserA    Couple?        @relation("CoupleUserA")
@@ -206,62 +189,7 @@ model Profile {
   @@map("profiles")
 }
 
-model Session {
-  id        String   @id @default(cuid())
-  userId    String
-  deviceId  String?
-  ipAddress String?
-  userAgent String?
 
-  isActive    Boolean  @default(true)
-  lastSeenAt  DateTime @default(now())
-  expiresAt   DateTime
-  createdAt   DateTime @default(now())
-
-  user   User    @relation(fields: [userId], references: [id], onDelete: Cascade)
-  device Device? @relation(fields: [deviceId], references: [id], onDelete: SetNull)
-
-  @@index([userId, isActive])
-  @@index([expiresAt])
-  @@map("sessions")
-}
-
-model RefreshToken {
-  id          String   @id @default(cuid())
-  userId      String
-  tokenHash   String   @unique
-  familyId    String
-  isRevoked   Boolean  @default(false)
-
-  expiresAt DateTime
-  createdAt DateTime @default(now())
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@index([userId])
-  @@index([familyId])
-  @@index([expiresAt])
-  @@map("refresh_tokens")
-}
-
-model Otp {
-  id        String     @id @default(cuid())
-  userId    String
-  code      String
-  purpose   OtpPurpose
-  attempts  Int        @default(0)
-  maxAttempts Int      @default(5)
-  isUsed    Boolean    @default(false)
-
-  expiresAt DateTime
-  createdAt DateTime @default(now())
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@index([userId, purpose, isUsed])
-  @@index([expiresAt])
-  @@map("otps")
-}
 
 model Device {
   id          String         @id @default(cuid())
@@ -278,7 +206,6 @@ model Device {
   updatedAt DateTime @updatedAt
 
   user     User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  sessions Session[]
 
   @@unique([userId, deviceToken])
   @@index([userId, isActive])

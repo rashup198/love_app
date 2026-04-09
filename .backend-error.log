@@ -1,0 +1,149 @@
+node:internal/modules/cjs/loader:1247
+  throw err;
+  ^
+
+Error: Cannot find module 'C:\Users\user\Desktop\love_app\dist\main'
+    at Function._resolveFilename (node:internal/modules/cjs/loader:1244:15)
+    at Function._load (node:internal/modules/cjs/loader:1070:27)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:217:24)
+    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:170:5)
+    at node:internal/main/run_main_module:36:49 {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: []
+}
+
+Node.js v22.13.1
+node:internal/modules/cjs/loader:1247
+  throw err;
+  ^
+
+Error: Cannot find module 'C:\Users\user\Desktop\love_app\dist\main'
+    at Function._resolveFilename (node:internal/modules/cjs/loader:1244:15)
+    at Function._load (node:internal/modules/cjs/loader:1070:27)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:217:24)
+    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:170:5)
+    at node:internal/main/run_main_module:36:49 {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: []
+}
+
+Node.js v22.13.1
+node:internal/modules/cjs/loader:1247
+  throw err;
+  ^
+
+Error: Cannot find module 'C:\Users\user\Desktop\love_app\dist\main'
+    at Function._resolveFilename (node:internal/modules/cjs/loader:1244:15)
+    at Function._load (node:internal/modules/cjs/loader:1070:27)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:217:24)
+    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:170:5)
+    at node:internal/main/run_main_module:36:49 {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: []
+}
+
+Node.js v22.13.1
+node:internal/modules/cjs/loader:1247
+  throw err;
+  ^
+
+Error: Cannot find module 'C:\Users\user\Desktop\love_app\dist\main'
+    at Function._resolveFilename (node:internal/modules/cjs/loader:1244:15)
+    at Function._load (node:internal/modules/cjs/loader:1070:27)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:217:24)
+    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:170:5)
+    at node:internal/main/run_main_module:36:49 {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: []
+}
+
+Node.js v22.13.1
+node:internal/modules/cjs/loader:1247
+  throw err;
+  ^
+
+Error: Cannot find module 'C:\Users\user\Desktop\love_app\dist\main'
+    at Function._resolveFilename (node:internal/modules/cjs/loader:1244:15)
+    at Function._load (node:internal/modules/cjs/loader:1070:27)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:217:24)
+    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:170:5)
+    at node:internal/main/run_main_module:36:49 {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: []
+}
+
+Node.js v22.13.1
+[31m[Nest] 7364  - [39m08/04/2026, 9:20:46 pm [31m  ERROR[39m [38;5;3m[ExceptionHandler] [39mUnknownDependenciesException [Error]: Nest can't resolve dependencies of the CouplesController (CouplesService, ?). Please make sure that the argument InviteService at index [1] is available in the CouplesModule module.
+
+Potential solutions:
+- Is CouplesModule a valid NestJS module?
+- If InviteService is a provider, is it part of the current CouplesModule?
+- If InviteService is exported from a separate @Module, is that module imported within CouplesModule?
+  @Module({
+    imports: [ /* the Module containing InviteService */ ]
+  })
+
+For more common dependency resolution issues, see: https://docs.nestjs.com/faq/common-errors
+    at Injector.lookupComponentInParentModules [90m(C:\Users\user\Desktop\love_app\[39mnode_modules\[4m@nestjs[24m\core\injector\injector.js:290:19[90m)[39m
+    at async resolveParam [90m(C:\Users\user\Desktop\love_app\[39mnode_modules\[4m@nestjs[24m\core\injector\injector.js:140:38[90m)[39m
+    at async Promise.all (index 1)
+    at async Injector.resolveConstructorParams [90m(C:\Users\user\Desktop\love_app\[39mnode_modules\[4m@nestjs[24m\core\injector\injector.js:169:27[90m)[39m
+    at async Injector.loadInstance [90m(C:\Users\user\Desktop\love_app\[39mnode_modules\[4m@nestjs[24m\core\injector\injector.js:75:13[90m)[39m
+    at async Injector.loadController [90m(C:\Users\user\Desktop\love_app\[39mnode_modules\[4m@nestjs[24m\core\injector\injector.js:94:9[90m)[39m
+    at async [90mC:\Users\user\Desktop\love_app\[39mnode_modules\[4m@nestjs[24m\core\injector\instance-loader.js:68:13
+    at async Promise.all (index 0)
+    at async InstanceLoader.createInstancesOfControllers [90m(C:\Users\user\Desktop\love_app\[39mnode_modules\[4m@nestjs[24m\core\injector\instance-loader.js:67:9[90m)[39m
+    at async [90mC:\Users\user\Desktop\love_app\[39mnode_modules\[4m@nestjs[24m\core\injector\instance-loader.js:42:13 {
+  type: [32m'CouplesController'[39m,
+  context: {
+    index: [33m1[39m,
+    dependencies: [
+      [36m[class CouplesService][39m,
+      [36m[class InviteService][39m
+    ],
+    name: [36m[class InviteService][39m
+  },
+  metadata: {
+    id: [32m'c89eed4b5675eb4b42a98'[39m
+  },
+  moduleRef: {
+    id: [32m'01c0ec5982901ba83b1e2'[39m
+  }
+}
+node:internal/modules/cjs/loader:1247
+  throw err;
+  ^
+
+Error: Cannot find module 'C:\Users\user\Desktop\love_app\dist\main'
+    at Function._resolveFilename (node:internal/modules/cjs/loader:1244:15)
+    at Function._load (node:internal/modules/cjs/loader:1070:27)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:217:24)
+    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:170:5)
+    at node:internal/main/run_main_module:36:49 {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: []
+}
+
+Node.js v22.13.1
+node:internal/modules/cjs/loader:1247
+  throw err;
+  ^
+
+Error: Cannot find module 'C:\Users\user\Desktop\love_app\dist\main'
+    at Function._resolveFilename (node:internal/modules/cjs/loader:1244:15)
+    at Function._load (node:internal/modules/cjs/loader:1070:27)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:217:24)
+    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:170:5)
+    at node:internal/main/run_main_module:36:49 {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: []
+}
+
+Node.js v22.13.1

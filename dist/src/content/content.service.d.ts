@@ -15,8 +15,8 @@ export declare class ContentService {
             createdAt: Date;
             updatedAt: Date;
             deletedAt: Date | null;
-            isActive: boolean;
             tier: import(".prisma/client").$Enums.ContentTier;
+            isActive: boolean;
             text: string;
             category: import(".prisma/client").$Enums.QuestionCategory;
             sortOrder: number;
@@ -40,8 +40,8 @@ export declare class ContentService {
         createdAt: Date;
         updatedAt: Date;
         deletedAt: Date | null;
-        isActive: boolean;
         tier: import(".prisma/client").$Enums.ContentTier;
+        isActive: boolean;
         text: string;
         category: import(".prisma/client").$Enums.QuestionCategory;
         sortOrder: number;
@@ -60,8 +60,8 @@ export declare class ContentService {
         createdAt: Date;
         updatedAt: Date;
         deletedAt: Date | null;
-        isActive: boolean;
         tier: import(".prisma/client").$Enums.ContentTier;
+        isActive: boolean;
         text: string;
         category: import(".prisma/client").$Enums.QuestionCategory;
         sortOrder: number;

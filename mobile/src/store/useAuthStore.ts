@@ -1,54 +1,35 @@
 import { create } from 'zustand';
-import * as SecureStore from 'expo-secure-store';
 import ENV from '../config';
 import type { User, Couple } from '../types';
+import api from '../api/client';
 
-interface AuthState {
+interface AppState {
   user: User | null;
   couple: Couple | null;
-  accessToken: string | null;
-  refreshToken: string | null;
   isHydrated: boolean;
   isHydrating: boolean;
 
-  setAuth: (data: {
-    accessToken: string;
-    refreshToken: string;
-    user: User;
-    couple?: Couple | null;
-  }) => Promise<void>;
-
+  setAuthData: (data: { user: User; couple?: Couple | null }) => void;
   setCouple: (couple: Couple) => void;
   clearCouple: () => void;
   updateUser: (patch: Partial<User>) => void;
+  clearAuth: () => void;
 
-  loadFromStorage: () => Promise<void>;
-  logout: () => Promise<void>;
+  fetchUserData: () => Promise<void>;
 }
 
 let hydrationPromise: Promise<void> | null = null;
 
-const useAuthStore = create<AuthState>((set, get) => ({
+const useAppStore = create<AppState>((set, get) => ({
   user: null,
   couple: null,
-  accessToken: null,
-  refreshToken: null,
   isHydrated: false,
   isHydrating: false,
 
-  setAuth: async (data) => {
-    const { accessToken, refreshToken, user, couple } = data;
-
-    await Promise.all([
-      SecureStore.setItemAsync(ENV.SECURE_STORE_TOKEN_KEY, accessToken),
-      SecureStore.setItemAsync(ENV.SECURE_STORE_REFRESH_KEY, refreshToken),
-    ]);
-
+  setAuthData: (data) => {
     set({
-      accessToken,
-      refreshToken,
-      user,
-      couple: couple ?? get().couple,
+      user: data.user,
+      couple: data.couple ?? get().couple,
       isHydrated: true,
       isHydrating: false,
     });
@@ -77,54 +58,37 @@ const useAuthStore = create<AuthState>((set, get) => ({
     }
   },
 
-  loadFromStorage: async () => {
-    if (hydrationPromise) return hydrationPromise;
+  clearAuth: () => {
+    set({
+      user: null,
+      couple: null,
+      isHydrated: true,
+      isHydrating: false,
+    });
+  },
 
+  fetchUserData: async () => {
+    if (hydrationPromise) return hydrationPromise;
     const state = get();
-    if (state.isHydrated) return;
+    if (state.isHydrating) return;
 
     hydrationPromise = (async () => {
       set({ isHydrating: true });
-
       try {
-        const [accessToken, refreshToken] = await Promise.all([
-          SecureStore.getItemAsync(ENV.SECURE_STORE_TOKEN_KEY),
-          SecureStore.getItemAsync(ENV.SECURE_STORE_REFRESH_KEY),
-        ]);
+        const { data } = await api.get<{
+          user: User;
+          couple: Couple | null;
+        }>('/users/me');
 
-        if (!accessToken) {
-          set({ isHydrated: true, isHydrating: false });
-          return;
-        }
-
-        set({ accessToken, refreshToken });
-
-        try {
-          const { default: api } = await import('../api/client');
-          const me = await api.get<{
-            user: User;
-            couple: Couple | null;
-          }>('/auth/me');
-
-          set({
-            user: me.user,
-            couple: me.couple,
-            isHydrated: true,
-            isHydrating: false,
-          });
-        } catch {
-          // Token may be expired — refreshToken interceptor will handle retry.
-          // If that also fails, the 401 interceptor triggers logout.
-          // For now, keep the token so the interceptor gets a chance.
-          set({ isHydrated: true, isHydrating: false });
-        }
-      } catch {
         set({
-          accessToken: null,
-          refreshToken: null,
+          user: data.user,
+          couple: data.couple,
           isHydrated: true,
           isHydrating: false,
         });
+      } catch (e) {
+        console.error("Failed to fetch user data", e);
+        set({ isHydrated: true, isHydrating: false });
       } finally {
         hydrationPromise = null;
       }
@@ -132,34 +96,15 @@ const useAuthStore = create<AuthState>((set, get) => ({
 
     return hydrationPromise;
   },
-
-  logout: async () => {
-    await Promise.all([
-      SecureStore.deleteItemAsync(ENV.SECURE_STORE_TOKEN_KEY),
-      SecureStore.deleteItemAsync(ENV.SECURE_STORE_REFRESH_KEY),
-    ]).catch(() => {});
-
-    set({
-      user: null,
-      couple: null,
-      accessToken: null,
-      refreshToken: null,
-    });
-  },
 }));
 
-// --- Derived selectors (no hooks inside — use with useAuthStore(selector)) ---
-
-export const selectIsAuthenticated = (state: AuthState) =>
-  state.isHydrated && state.accessToken !== null && state.user !== null;
-
-export const selectNeedsOnboarding = (state: AuthState) =>
+export const selectNeedsOnboarding = (state: AppState) =>
   state.user !== null && !state.user.isOnboarded;
 
-export const selectHasCouple = (state: AuthState) =>
+export const selectHasCouple = (state: AppState) =>
   state.user?.coupleId != null;
 
-export const selectCoupleId = (state: AuthState) =>
+export const selectCoupleId = (state: AppState) =>
   state.couple?.id ?? state.user?.coupleId ?? null;
 
-export default useAuthStore;
+export default useAppStore;

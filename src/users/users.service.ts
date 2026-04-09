@@ -20,7 +20,6 @@ export class UsersService {
       id: user.id,
       email: user.email,
       isOnboarded: user.isOnboarded,
-      isEmailVerified: user.isEmailVerified,
       lastActiveAt: user.lastActiveAt,
       profile: user.profile,
       subscription: user.subscription
@@ -79,10 +78,7 @@ export class UsersService {
       data: { deletedAt: new Date() },
     });
 
-    await this.prisma.session.updateMany({
-      where: { userId },
-      data: { isActive: false },
-    });
+
 
     return { deactivated: true };
   }

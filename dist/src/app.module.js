@@ -11,7 +11,6 @@ const common_1 = require("@nestjs/common");
 const config_1 = require("@nestjs/config");
 const core_1 = require("@nestjs/core");
 const throttler_1 = require("@nestjs/throttler");
-const jwt_1 = require("@nestjs/jwt");
 const prisma_module_1 = require("./prisma/prisma.module");
 const redis_module_1 = require("./redis/redis.module");
 const auth_module_1 = require("./auth/auth.module");
@@ -46,15 +45,6 @@ exports.AppModule = AppModule = __decorate([
                     },
                 ],
                 inject: [config_1.ConfigService],
-            }),
-            jwt_1.JwtModule.registerAsync({
-                imports: [config_1.ConfigModule],
-                useFactory: (config) => ({
-                    secret: config.getOrThrow('JWT_SECRET'),
-                    signOptions: { expiresIn: config.get('JWT_ACCESS_EXPIRY', '15m') },
-                }),
-                inject: [config_1.ConfigService],
-                global: true,
             }),
             prisma_module_1.PrismaModule,
             redis_module_1.RedisModule,

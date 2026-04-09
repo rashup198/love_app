@@ -12,15 +12,14 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.JwtAuthGuard = void 0;
 const common_1 = require("@nestjs/common");
 const core_1 = require("@nestjs/core");
-const jwt_1 = require("@nestjs/jwt");
-const config_1 = require("@nestjs/config");
 const public_decorator_1 = require("../decorators/public.decorator");
+const clerk_sdk_node_1 = require("@clerk/clerk-sdk-node");
+const config_1 = require("@nestjs/config");
 let JwtAuthGuard = class JwtAuthGuard {
-    constructor(reflector, jwt, config) {
+    constructor(reflector, config) {
         this.reflector = reflector;
-        this.jwt = jwt;
         this.config = config;
-        this.jwtSecret = this.config.getOrThrow('JWT_SECRET');
+        this.logger = new common_1.Logger('AuthGuard');
     }
     async canActivate(context) {
         const isPublic = this.reflector.getAllAndOverride(public_decorator_1.IS_PUBLIC_KEY, [
@@ -36,21 +35,18 @@ let JwtAuthGuard = class JwtAuthGuard {
             throw new common_1.UnauthorizedException('Missing Authorization header');
         }
         try {
-            const payload = this.jwt.verify(token, { secret: this.jwtSecret });
-            if (!payload.sub || !payload.sessionId) {
-                throw new common_1.UnauthorizedException('Malformed token payload');
-            }
+            const payload = await (0, clerk_sdk_node_1.verifyToken)(token, {
+                secretKey: this.config.get('CLERK_SECRET_KEY'),
+                issuer: null,
+            });
             request.user = {
                 sub: payload.sub,
-                coupleId: payload.coupleId ?? null,
-                sessionId: payload.sessionId,
+                sessionId: payload.sid,
             };
             return true;
         }
         catch (error) {
-            if (error instanceof common_1.UnauthorizedException) {
-                throw error;
-            }
+            this.logger.error(`Clerk Token Verification Failed: ${error.message}`);
             throw new common_1.UnauthorizedException('Invalid or expired token');
         }
     }
@@ -70,7 +66,6 @@ exports.JwtAuthGuard = JwtAuthGuard;
 exports.JwtAuthGuard = JwtAuthGuard = __decorate([
     (0, common_1.Injectable)(),
     __metadata("design:paramtypes", [core_1.Reflector,
-        jwt_1.JwtService,
         config_1.ConfigService])
 ], JwtAuthGuard);
 //# sourceMappingURL=jwt-auth.guard.js.map

@@ -7,19 +7,18 @@ export declare class UsersService {
         id: string;
         email: string;
         isOnboarded: boolean;
-        isEmailVerified: boolean;
         lastActiveAt: Date | null;
         profile: {
             id: string;
             createdAt: Date;
             updatedAt: Date;
-            userId: string;
             displayName: string;
             avatarUrl: string | null;
             dateOfBirth: Date | null;
             gender: import(".prisma/client").$Enums.Gender | null;
             bio: string | null;
             timezone: string;
+            userId: string;
         } | null;
         subscription: {
             tier: import(".prisma/client").$Enums.SubscriptionTier;
@@ -31,13 +30,13 @@ export declare class UsersService {
         id: string;
         createdAt: Date;
         updatedAt: Date;
-        userId: string;
         displayName: string;
         avatarUrl: string | null;
         dateOfBirth: Date | null;
         gender: import(".prisma/client").$Enums.Gender | null;
         bio: string | null;
         timezone: string;
+        userId: string;
     }>;
     deactivateAccount(userId: string): Promise<{
         deactivated: boolean;

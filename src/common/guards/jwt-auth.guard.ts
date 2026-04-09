@@ -3,24 +3,22 @@ import {
   CanActivate,
   ExecutionContext,
   UnauthorizedException,
+  Logger,
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
-import { JwtService } from '@nestjs/jwt';
-import { ConfigService } from '@nestjs/config';
 import { Request } from 'express';
 import { IS_PUBLIC_KEY } from '../decorators/public.decorator';
+import { verifyToken } from '@clerk/clerk-sdk-node';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class JwtAuthGuard implements CanActivate {
-  private readonly jwtSecret: string;
-
+  private readonly logger = new Logger('AuthGuard');
+  
   constructor(
     private readonly reflector: Reflector,
-    private readonly jwt: JwtService,
     private readonly config: ConfigService,
-  ) {
-    this.jwtSecret = this.config.getOrThrow<string>('JWT_SECRET');
-  }
+  ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const isPublic = this.reflector.getAllAndOverride<boolean>(IS_PUBLIC_KEY, [
@@ -40,23 +38,23 @@ export class JwtAuthGuard implements CanActivate {
     }
 
     try {
-      const payload = this.jwt.verify(token, { secret: this.jwtSecret });
+      // Verify token with Clerk
+      const payload = await verifyToken(token, {
+        secretKey: this.config.get<string>('CLERK_SECRET_KEY'),
+        issuer: null,
+      });
 
-      if (!payload.sub || !payload.sessionId) {
-        throw new UnauthorizedException('Malformed token payload');
-      }
-
+      // Map clerk ID back to request.user so our existing controllers continue to work
+      // with @CurrentUser() user.sub
       (request as any).user = {
-        sub: payload.sub,
-        coupleId: payload.coupleId ?? null,
-        sessionId: payload.sessionId,
+        sub: payload.sub, 
+        // We no longer track sessionId directly locally via JWT, so we omit or mock it
+        sessionId: payload.sid,
       };
 
       return true;
     } catch (error) {
-      if (error instanceof UnauthorizedException) {
-        throw error;
-      }
+      this.logger.error(`Clerk Token Verification Failed: ${error.message}`);
       throw new UnauthorizedException('Invalid or expired token');
     }
   }

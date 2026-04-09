@@ -17,13 +17,12 @@ exports.EventsGateway = void 0;
 const websockets_1 = require("@nestjs/websockets");
 const common_1 = require("@nestjs/common");
 const socket_io_1 = require("socket.io");
-const jwt_1 = require("@nestjs/jwt");
+const clerk_sdk_node_1 = require("@clerk/clerk-sdk-node");
 const config_1 = require("@nestjs/config");
 const prisma_service_1 = require("../prisma/prisma.service");
 const redis_service_1 = require("../redis/redis.service");
 let EventsGateway = EventsGateway_1 = class EventsGateway {
-    constructor(jwt, config, prisma, redis) {
-        this.jwt = jwt;
+    constructor(config, prisma, redis) {
         this.config = config;
         this.prisma = prisma;
         this.redis = redis;
@@ -49,7 +48,7 @@ let EventsGateway = EventsGateway_1 = class EventsGateway {
                 client.disconnect(true);
                 return;
             }
-            const payload = this.verifyToken(token);
+            const payload = await this.verifyToken(token);
             if (!payload || !payload.sub) {
                 this.logger.warn(`Connection rejected: invalid token (${client.id})`);
                 client.emit('error', { message: 'Invalid or expired token' });
@@ -187,10 +186,11 @@ let EventsGateway = EventsGateway_1 = class EventsGateway {
         }
         return null;
     }
-    verifyToken(token) {
+    async verifyToken(token) {
         try {
-            return this.jwt.verify(token, {
-                secret: this.config.getOrThrow('JWT_SECRET'),
+            return await (0, clerk_sdk_node_1.verifyToken)(token, {
+                secretKey: this.config.get('CLERK_SECRET_KEY'),
+                issuer: null,
             });
         }
         catch {
@@ -267,8 +267,7 @@ exports.EventsGateway = EventsGateway = EventsGateway_1 = __decorate([
         pingInterval: 25000,
         pingTimeout: 10000,
     }),
-    __metadata("design:paramtypes", [jwt_1.JwtService,
-        config_1.ConfigService,
+    __metadata("design:paramtypes", [config_1.ConfigService,
         prisma_service_1.PrismaService,
         redis_service_1.RedisService])
 ], EventsGateway);

@@ -32,8 +32,8 @@ export declare class InteractionsController {
         id: string;
         createdAt: Date;
         deletedAt: Date | null;
-        senderId: string;
         coupleId: string;
+        senderId: string;
         content: string;
         isRead: boolean;
         readAt: Date | null;
@@ -52,8 +52,8 @@ export declare class InteractionsController {
             id: string;
             createdAt: Date;
             deletedAt: Date | null;
-            senderId: string;
             coupleId: string;
+            senderId: string;
             content: string;
             isRead: boolean;
             readAt: Date | null;
