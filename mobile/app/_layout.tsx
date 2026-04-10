@@ -31,17 +31,20 @@ function InitialLayout() {
   const fetchUserData = useAppStore((s) => s.fetchUserData);
   const isHydrated = useAppStore((s) => s.isHydrated);
 
+  // Set token provider synchronously during render to prevent race conditions on first mount
+  if (isLoaded && isSignedIn) {
+    api.setTokenProvider(() => getToken());
+  } else if (isLoaded && !isSignedIn) {
+    api.setTokenProvider(null);
+  }
+
   useEffect(() => {
     if (isSignedIn) {
-      getToken().then((token) => {
-        api.setToken(token);
-        fetchUserData();
-      });
+      fetchUserData();
     } else if (isLoaded && !isSignedIn) {
-      api.setToken(null);
       useAppStore.getState().clearAuth();
     }
-  }, [isSignedIn, isLoaded, getToken, fetchUserData]);
+  }, [isSignedIn, isLoaded, fetchUserData]);
 
   useEffect(() => {
     if (!isLoaded) return;

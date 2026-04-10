@@ -14,7 +14,7 @@ const STATUS_MESSAGES: Record<number, string> = {
 
 class ApiClient {
   private readonly instance: AxiosInstance;
-  private currentToken: string | null = null;
+  private tokenProvider: (() => Promise<string | null>) | null = null;
 
   constructor() {
     this.instance = axios.create({
@@ -27,13 +27,25 @@ class ApiClient {
     this.instance.interceptors.response.use(this.handleResponse, this.handleError);
   }
 
-  public setToken(token: string | null) {
-    this.currentToken = token;
+  public setTokenProvider(provider: (() => Promise<string | null>) | null) {
+    this.tokenProvider = provider;
   }
 
-  private attachToken = (config: InternalAxiosRequestConfig) => {
-    if (this.currentToken && config.headers) {
-      config.headers.Authorization = `Bearer ${this.currentToken}`;
+  private attachToken = async (config: InternalAxiosRequestConfig) => {
+    if (this.tokenProvider) {
+      try {
+        const token = await this.tokenProvider();
+        console.log('--- Axios Interceptor ---');
+        console.log('Resolving Token: ', token ? token.substring(0, 20) + '...' : 'NULL');
+
+        if (token && config.headers) {
+          config.headers.Authorization = `Bearer ${token}`;
+        }
+      } catch (e) {
+        console.log('Failed to fetch clerk token:', e);
+      }
+    } else {
+      console.log('--- Axios Interceptor --- No tokenProvider set!');
     }
     return config;
   };

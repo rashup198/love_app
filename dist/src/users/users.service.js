@@ -17,10 +17,34 @@ let UsersService = class UsersService {
         this.prisma = prisma;
     }
     async getProfile(userId) {
-        const user = await this.prisma.user.findUnique({
+        let user = await this.prisma.user.findUnique({
             where: { id: userId, deletedAt: null },
             include: { profile: true, subscription: { include: { plan: true } } },
         });
+        if (!user) {
+            try {
+                const { createClerkClient } = require('@clerk/clerk-sdk-node');
+                const clerkClient = createClerkClient({ secretKey: process.env.CLERK_SECRET_KEY });
+                const clerkUser = await clerkClient.users.getUser(userId);
+                const primaryEmail = clerkUser.emailAddresses.find((e) => e.id === clerkUser.primaryEmailAddressId)
+                    ?.emailAddress || clerkUser.emailAddresses[0]?.emailAddress;
+                if (primaryEmail) {
+                    user = await this.prisma.user.upsert({
+                        where: { id: userId },
+                        update: {},
+                        create: {
+                            id: userId,
+                            email: primaryEmail,
+                            isOnboarded: false,
+                        },
+                        include: { profile: true, subscription: { include: { plan: true } } },
+                    });
+                }
+            }
+            catch (e) {
+                console.error('Failed to lazy sync user from clerk:', e);
+            }
+        }
         if (!user) {
             throw new common_1.NotFoundException('User not found');
         }

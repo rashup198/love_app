@@ -33,10 +33,7 @@ function AuthTokenSync({ children }: { children: React.ReactNode }) {
   const { getToken } = useAuth();
 
   useEffect(() => {
-    (async () => {
-      const token = await getToken();
-      api.setToken(token);
-    })();
+    api.setTokenProvider(() => getToken());
   }, [getToken]);
 
   return <>{children}</>;

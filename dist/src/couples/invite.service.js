@@ -22,6 +22,33 @@ let InviteService = class InviteService {
         this.INVITE_EXPIRY_HOURS = 48;
     }
     async createInvite(senderId) {
+        let user = await this.prisma.user.findUnique({ where: { id: senderId } });
+        if (!user) {
+            try {
+                const { createClerkClient } = require('@clerk/clerk-sdk-node');
+                const clerkClient = createClerkClient({ secretKey: process.env.CLERK_SECRET_KEY });
+                const clerkUser = await clerkClient.users.getUser(senderId);
+                const primaryEmail = clerkUser.emailAddresses.find((e) => e.id === clerkUser.primaryEmailAddressId)
+                    ?.emailAddress || clerkUser.emailAddresses[0]?.emailAddress;
+                if (primaryEmail) {
+                    user = await this.prisma.user.upsert({
+                        where: { id: senderId },
+                        update: {},
+                        create: {
+                            id: senderId,
+                            email: primaryEmail,
+                            isOnboarded: false,
+                        },
+                    });
+                }
+            }
+            catch (e) {
+                console.error('Failed to lazy sync user from clerk in createInvite:', e);
+            }
+            if (!user) {
+                throw new common_1.BadRequestException('User is not fully synced to DB yet. Please try again.');
+            }
+        }
         const existingCouple = await this.prisma.couple.findFirst({
             where: {
                 OR: [{ userAId: senderId }, { userBId: senderId }],

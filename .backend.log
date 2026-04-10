@@ -674,3 +674,168 @@
 
 [2J[3J[H[[90m9:53:38 am[0m] File change detected. Starting incremental compilation...
 
+[2J[3J[H[[90m10:20:18 am[0m] File change detected. Starting incremental compilation...
+
+[[90m10:20:19 am[0m] Found 0 errors. Watching for file changes.
+
+[2J[3J[H[[90m10:20:27 am[0m] File change detected. Starting incremental compilation...
+
+[[90m10:20:31 am[0m] Found 0 errors. Watching for file changes.
+
+[2J[3J[H[[90m10:20:32 am[0m] File change detected. Starting incremental compilation...
+
+[[90m10:20:37 am[0m] Found 0 errors. Watching for file changes.
+
+[2J[3J[H[[90m10:46:43 am[0m] File change detected. Starting incremental compilation...
+
+[96msrc/users/users.service.ts[0m:[93m25[0m:[93m11[0m - [91merror[0m[90m TS2588: [0mCannot assign to 'user' because it is a constant.
+
+[7m25[0m           user = await this.prisma.user.upsert({
+[7m  [0m [91m          ~~~~[0m
+
+[[90m10:46:45 am[0m] Found 1 error. Watching for file changes.
+
+[2J[3J[H[[90m10:46:58 am[0m] File change detected. Starting incremental compilation...
+
+[[90m10:47:01 am[0m] Found 0 errors. Watching for file changes.
+
+[32m[Nest] 24116  - [39m09/04/2026, 10:47:06 am [32m    LOG[39m [38;5;3m[NestFactory] [39m[32mStarting Nest application...[39m
+[32m[Nest] 24116  - [39m09/04/2026, 10:47:07 am [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigHostModule dependencies initialized[39m[38;5;3m +74ms[39m
+[32m[Nest] 24116  - [39m09/04/2026, 10:47:07 am [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mPrismaModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 24116  - [39m09/04/2026, 10:47:07 am [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigModule dependencies initialized[39m[38;5;3m +7ms[39m
+[32m[Nest] 24116  - [39m09/04/2026, 10:47:07 am [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 24116  - [39m09/04/2026, 10:47:07 am [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAuthModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 24116  - [39m09/04/2026, 10:47:07 am [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mRedisModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 24116  - [39m09/04/2026, 10:47:07 am [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mUsersModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 24116  - [39m09/04/2026, 10:47:07 am [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mSubscriptionsModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 24116  - [39m09/04/2026, 10:47:07 am [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mEventsModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 24116  - [39m09/04/2026, 10:47:07 am [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mThrottlerModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 24116  - [39m09/04/2026, 10:47:07 am [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mContentModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 24116  - [39m09/04/2026, 10:47:07 am [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAppModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 24116  - [39m09/04/2026, 10:47:07 am [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mCouplesModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 24116  - [39m09/04/2026, 10:47:07 am [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mMoodModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 24116  - [39m09/04/2026, 10:47:07 am [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mNotificationsModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 24116  - [39m09/04/2026, 10:47:07 am [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mInteractionsModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 24116  - [39m09/04/2026, 10:47:07 am [32m    LOG[39m [38;5;3m[WebSocketsController] [39m[32mEventsGateway subscribed to the "joinCoupleRoom" message[39m[38;5;3m +45ms[39m
+[32m[Nest] 24116  - [39m09/04/2026, 10:47:07 am [32m    LOG[39m [38;5;3m[WebSocketsController] [39m[32mEventsGateway subscribed to the "leaveCoupleRoom" message[39m[38;5;3m +0ms[39m
+[32m[Nest] 24116  - [39m09/04/2026, 10:47:07 am [32m    LOG[39m [38;5;3m[WebSocketsController] [39m[32mEventsGateway subscribed to the "typing" message[39m[38;5;3m +0ms[39m
+[32m[Nest] 24116  - [39m09/04/2026, 10:47:07 am [32m    LOG[39m [38;5;3m[WebSocketsController] [39m[32mEventsGateway subscribed to the "ping" message[39m[38;5;3m +0ms[39m
+[32m[Nest] 24116  - [39m09/04/2026, 10:47:07 am [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mAuthController {/api/v1/webhooks/clerk}:[39m[38;5;3m +5ms[39m
+[32m[Nest] 24116  - [39m09/04/2026, 10:47:07 am [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/webhooks/clerk, POST} route[39m[38;5;3m +7ms[39m
+[32m[Nest] 24116  - [39m09/04/2026, 10:47:07 am [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mUsersController {/api/v1/users}:[39m[38;5;3m +1ms[39m
+[32m[Nest] 24116  - [39m09/04/2026, 10:47:07 am [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/users/me, GET} route[39m[38;5;3m +2ms[39m
+[32m[Nest] 24116  - [39m09/04/2026, 10:47:07 am [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/users/me, PATCH} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 24116  - [39m09/04/2026, 10:47:07 am [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/users/me, DELETE} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 24116  - [39m09/04/2026, 10:47:07 am [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mCouplesController {/api/v1/couples}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 24116  - [39m09/04/2026, 10:47:07 am [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/couples, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 24116  - [39m09/04/2026, 10:47:07 am [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/couples/join, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 24116  - [39m09/04/2026, 10:47:07 am [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/couples/invite-code, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 24116  - [39m09/04/2026, 10:47:07 am [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/couples/relationship-date, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 24116  - [39m09/04/2026, 10:47:07 am [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/couples, DELETE} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 24116  - [39m09/04/2026, 10:47:07 am [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mContentController {/api/v1/content}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 24116  - [39m09/04/2026, 10:47:07 am [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/content/questions, GET} route[39m[38;5;3m +2ms[39m
+[32m[Nest] 24116  - [39m09/04/2026, 10:47:07 am [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/content/questions, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 24116  - [39m09/04/2026, 10:47:07 am [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/content/questions/bulk, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 24116  - [39m09/04/2026, 10:47:07 am [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/content/daily, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 24116  - [39m09/04/2026, 10:47:07 am [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/content/daily/history, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 24116  - [39m09/04/2026, 10:47:07 am [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mInteractionsController {/api/v1/interactions}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 24116  - [39m09/04/2026, 10:47:07 am [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/interactions/answers, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 24116  - [39m09/04/2026, 10:47:07 am [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/interactions/answers/:dailyQuestionId/reveal, POST} route[39m[38;5;3m +2ms[39m
+[32m[Nest] 24116  - [39m09/04/2026, 10:47:07 am [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/interactions/reactions, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 24116  - [39m09/04/2026, 10:47:07 am [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/interactions/reactions/:answerId, DELETE} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 24116  - [39m09/04/2026, 10:47:07 am [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/interactions/messages, POST} route[39m[38;5;3m +2ms[39m
+[32m[Nest] 24116  - [39m09/04/2026, 10:47:07 am [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/interactions/messages, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 24116  - [39m09/04/2026, 10:47:07 am [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/interactions/messages/read, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 24116  - [39m09/04/2026, 10:47:07 am [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/interactions/messages/:id, DELETE} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 24116  - [39m09/04/2026, 10:47:07 am [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mMoodController {/api/v1/mood}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 24116  - [39m09/04/2026, 10:47:07 am [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/mood, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 24116  - [39m09/04/2026, 10:47:07 am [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/mood, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 24116  - [39m09/04/2026, 10:47:07 am [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/mood/history, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 24116  - [39m09/04/2026, 10:47:07 am [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/mood/partner, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 24116  - [39m09/04/2026, 10:47:07 am [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mNotificationsController {/api/v1/notifications}:[39m[38;5;3m +1ms[39m
+[32m[Nest] 24116  - [39m09/04/2026, 10:47:07 am [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/notifications, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 24116  - [39m09/04/2026, 10:47:07 am [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/notifications/:id/read, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 24116  - [39m09/04/2026, 10:47:07 am [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/notifications/read-all, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 24116  - [39m09/04/2026, 10:47:07 am [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mSubscriptionsController {/api/v1/subscriptions}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 24116  - [39m09/04/2026, 10:47:07 am [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/subscriptions/plans, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 24116  - [39m09/04/2026, 10:47:07 am [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/subscriptions/me, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 24116  - [39m09/04/2026, 10:47:07 am [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/subscriptions, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 24116  - [39m09/04/2026, 10:47:07 am [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/subscriptions, DELETE} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 24116  - [39m09/04/2026, 10:47:07 am [32m    LOG[39m [38;5;3m[PrismaModule] [39m[32mPrisma connected to database[39m
+[32m[Nest] 24116  - [39m09/04/2026, 10:47:07 am [32m    LOG[39m [38;5;3m[NestApplication] [39m[32mNest application successfully started[39m[38;5;3m +7ms[39m
+[2J[3J[H[[90m10:47:15 am[0m] File change detected. Starting incremental compilation...
+
+[[90m10:47:19 am[0m] Found 0 errors. Watching for file changes.
+
+[32m[Nest] 20720  - [39m09/04/2026, 10:47:24 am [32m    LOG[39m [38;5;3m[NestFactory] [39m[32mStarting Nest application...[39m
+[32m[Nest] 20720  - [39m09/04/2026, 10:47:24 am [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigHostModule dependencies initialized[39m[38;5;3m +104ms[39m
+[32m[Nest] 20720  - [39m09/04/2026, 10:47:24 am [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mPrismaModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 20720  - [39m09/04/2026, 10:47:24 am [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigModule dependencies initialized[39m[38;5;3m +8ms[39m
+[32m[Nest] 20720  - [39m09/04/2026, 10:47:24 am [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 20720  - [39m09/04/2026, 10:47:24 am [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAuthModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 20720  - [39m09/04/2026, 10:47:24 am [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mRedisModule dependencies initialized[39m[38;5;3m +2ms[39m
+[32m[Nest] 20720  - [39m09/04/2026, 10:47:24 am [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mUsersModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 20720  - [39m09/04/2026, 10:47:24 am [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mSubscriptionsModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 20720  - [39m09/04/2026, 10:47:24 am [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mEventsModule dependencies initialized[39m[38;5;3m +2ms[39m
+[32m[Nest] 20720  - [39m09/04/2026, 10:47:24 am [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mThrottlerModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 20720  - [39m09/04/2026, 10:47:24 am [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mContentModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 20720  - [39m09/04/2026, 10:47:24 am [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAppModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 20720  - [39m09/04/2026, 10:47:24 am [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mCouplesModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 20720  - [39m09/04/2026, 10:47:24 am [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mMoodModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 20720  - [39m09/04/2026, 10:47:24 am [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mNotificationsModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 20720  - [39m09/04/2026, 10:47:24 am [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mInteractionsModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 20720  - [39m09/04/2026, 10:47:24 am [32m    LOG[39m [38;5;3m[WebSocketsController] [39m[32mEventsGateway subscribed to the "joinCoupleRoom" message[39m[38;5;3m +53ms[39m
+[32m[Nest] 20720  - [39m09/04/2026, 10:47:24 am [32m    LOG[39m [38;5;3m[WebSocketsController] [39m[32mEventsGateway subscribed to the "leaveCoupleRoom" message[39m[38;5;3m +0ms[39m
+[32m[Nest] 20720  - [39m09/04/2026, 10:47:24 am [32m    LOG[39m [38;5;3m[WebSocketsController] [39m[32mEventsGateway subscribed to the "typing" message[39m[38;5;3m +0ms[39m
+[32m[Nest] 20720  - [39m09/04/2026, 10:47:24 am [32m    LOG[39m [38;5;3m[WebSocketsController] [39m[32mEventsGateway subscribed to the "ping" message[39m[38;5;3m +0ms[39m
+[32m[Nest] 20720  - [39m09/04/2026, 10:47:24 am [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mAuthController {/api/v1/webhooks/clerk}:[39m[38;5;3m +3ms[39m
+[32m[Nest] 20720  - [39m09/04/2026, 10:47:24 am [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/webhooks/clerk, POST} route[39m[38;5;3m +7ms[39m
+[32m[Nest] 20720  - [39m09/04/2026, 10:47:24 am [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mUsersController {/api/v1/users}:[39m[38;5;3m +1ms[39m
+[32m[Nest] 20720  - [39m09/04/2026, 10:47:24 am [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/users/me, GET} route[39m[38;5;3m +3ms[39m
+[32m[Nest] 20720  - [39m09/04/2026, 10:47:24 am [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/users/me, PATCH} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 20720  - [39m09/04/2026, 10:47:25 am [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/users/me, DELETE} route[39m[38;5;3m +3ms[39m
+[32m[Nest] 20720  - [39m09/04/2026, 10:47:25 am [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mCouplesController {/api/v1/couples}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 20720  - [39m09/04/2026, 10:47:25 am [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/couples, GET} route[39m[38;5;3m +2ms[39m
+[32m[Nest] 20720  - [39m09/04/2026, 10:47:25 am [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/couples/join, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 20720  - [39m09/04/2026, 10:47:25 am [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/couples/invite-code, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 20720  - [39m09/04/2026, 10:47:25 am [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/couples/relationship-date, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 20720  - [39m09/04/2026, 10:47:25 am [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/couples, DELETE} route[39m[38;5;3m +2ms[39m
+[32m[Nest] 20720  - [39m09/04/2026, 10:47:25 am [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mContentController {/api/v1/content}:[39m[38;5;3m +1ms[39m
+[32m[Nest] 20720  - [39m09/04/2026, 10:47:25 am [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/content/questions, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 20720  - [39m09/04/2026, 10:47:25 am [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/content/questions, POST} route[39m[38;5;3m +2ms[39m
+[32m[Nest] 20720  - [39m09/04/2026, 10:47:25 am [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/content/questions/bulk, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 20720  - [39m09/04/2026, 10:47:25 am [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/content/daily, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 20720  - [39m09/04/2026, 10:47:25 am [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/content/daily/history, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 20720  - [39m09/04/2026, 10:47:25 am [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mInteractionsController {/api/v1/interactions}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 20720  - [39m09/04/2026, 10:47:25 am [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/interactions/answers, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 20720  - [39m09/04/2026, 10:47:25 am [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/interactions/answers/:dailyQuestionId/reveal, POST} route[39m[38;5;3m +2ms[39m
+[32m[Nest] 20720  - [39m09/04/2026, 10:47:25 am [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/interactions/reactions, POST} route[39m[38;5;3m +2ms[39m
+[32m[Nest] 20720  - [39m09/04/2026, 10:47:25 am [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/interactions/reactions/:answerId, DELETE} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 20720  - [39m09/04/2026, 10:47:25 am [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/interactions/messages, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 20720  - [39m09/04/2026, 10:47:25 am [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/interactions/messages, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 20720  - [39m09/04/2026, 10:47:25 am [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/interactions/messages/read, POST} route[39m[38;5;3m +2ms[39m
+[32m[Nest] 20720  - [39m09/04/2026, 10:47:25 am [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/interactions/messages/:id, DELETE} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 20720  - [39m09/04/2026, 10:47:25 am [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mMoodController {/api/v1/mood}:[39m[38;5;3m +1ms[39m
+[32m[Nest] 20720  - [39m09/04/2026, 10:47:25 am [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/mood, POST} route[39m[38;5;3m +2ms[39m
+[32m[Nest] 20720  - [39m09/04/2026, 10:47:25 am [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/mood, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 20720  - [39m09/04/2026, 10:47:25 am [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/mood/history, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 20720  - [39m09/04/2026, 10:47:25 am [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/mood/partner, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 20720  - [39m09/04/2026, 10:47:25 am [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mNotificationsController {/api/v1/notifications}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 20720  - [39m09/04/2026, 10:47:25 am [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/notifications, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 20720  - [39m09/04/2026, 10:47:25 am [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/notifications/:id/read, POST} route[39m[38;5;3m +2ms[39m
+[32m[Nest] 20720  - [39m09/04/2026, 10:47:25 am [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/notifications/read-all, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 20720  - [39m09/04/2026, 10:47:25 am [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mSubscriptionsController {/api/v1/subscriptions}:[39m[38;5;3m +1ms[39m
+[32m[Nest] 20720  - [39m09/04/2026, 10:47:25 am [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/subscriptions/plans, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 20720  - [39m09/04/2026, 10:47:25 am [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/subscriptions/me, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 20720  - [39m09/04/2026, 10:47:25 am [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/subscriptions, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 20720  - [39m09/04/2026, 10:47:25 am [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/subscriptions, DELETE} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 20720  - [39m09/04/2026, 10:47:25 am [32m    LOG[39m [38;5;3m[PrismaModule] [39m[32mPrisma connected to database[39m
+[32m[Nest] 20720  - [39m09/04/2026, 10:47:25 am [32m    LOG[39m [38;5;3m[NestApplication] [39m[32mNest application successfully started[39m[38;5;3m +6ms[39m
+[32m[Nest] 20720  - [39m09/04/2026, 10:47:25 am [32m    LOG[39m [38;5;3m[Bootstrap] [39m[32mLovora API running on port 3000[39m
+[32m[Nest] 20720  - [39m09/04/2026, 10:47:25 am [32m    LOG[39m [38;5;3m[Bootstrap] [39m[32mEnvironment: development[39m
+[32m[Nest] 20720  - [39m09/04/2026, 10:47:25 am [32m    LOG[39m [38;5;3m[RedisService] [39m[32mRedis subscriber connected[39m
+[32m[Nest] 20720  - [39m09/04/2026, 10:47:25 am [32m    LOG[39m [38;5;3m[RedisService] [39m[32mRedis publisher connected[39m
+[32m[Nest] 20720  - [39m09/04/2026, 10:47:25 am [32m    LOG[39m [38;5;3m[RedisService] [39m[32mSubscribed to Redis pattern: couple_*[39m
+[32m[Nest] 20720  - [39m09/04/2026, 10:47:25 am [32m    LOG[39m [38;5;3m[EventsGateway] [39m[32mWebSocket gateway initialized, Redis subscription active[39m
+[2J[3J[H[[90m10:54:42 am[0m] File change detected. Starting incremental compilation...
+
