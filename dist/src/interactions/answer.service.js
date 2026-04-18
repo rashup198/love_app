@@ -106,6 +106,12 @@ let AnswerService = AnswerService_1 = class AnswerService {
             userId,
             partnerId,
             bothAnswered: result.bothAnswered,
+            answers: result.bothAnswered ? result.allAnswers.map((a) => ({
+                id: a.id,
+                userId: a.userId,
+                text: a.text,
+                createdAt: a.createdAt,
+            })) : undefined,
             timestamp: Date.now(),
         }));
         if (result.bothAnswered) {

@@ -3,3 +3,41 @@ node_modules
 .env
 
 /generated/prisma
+# Bytecode
+*.py[cod]
+*$py.class
+
+# Coverage directory used by tools like istanbul
+coverage
+.nyc_output
+
+# Logs
+*.log
+
+# Runtime files
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Dependencies
+node_modules/
+jspm_packages/
+
+# Editor directories and files
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Testing
+/test/test_results
+/test/cypress/results
+.backend.log
+.backend.log.2  
+.backend-error.log
+.mobile.log

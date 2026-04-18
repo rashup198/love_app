@@ -4,9 +4,15 @@ import { AppState, AppStateStatus } from 'react-native';
 import ENV from '../config';
 
 interface SocketEventMap {
-  partner_answered: { questionId: string; bothAnswered: boolean; timestamp: number };
+  partner_answered: { 
+    questionId: string; 
+    bothAnswered: boolean; 
+    answers?: Array<{ id: string; userId: string; text: string; createdAt: string }>;
+    timestamp: number;
+  };
   answers_revealed: { questionId: string; timestamp: number };
   partner_typing: { userId: string; timestamp: number };
+  couple_paired: { coupleId: string };
 }
 
 type EventName = keyof SocketEventMap;
@@ -14,34 +20,40 @@ type EventHandler<T extends EventName> = (data: SocketEventMap[T]) => void;
 
 interface UseSocketOptions {
   coupleId: string | null;
+  userId?: string | null;
   tokenProvider?: () => Promise<string | null>;
   onPartnerAnswered?: EventHandler<'partner_answered'>;
   onAnswersRevealed?: EventHandler<'answers_revealed'>;
   onPartnerTyping?: EventHandler<'partner_typing'>;
+  onCouplePaired?: EventHandler<'couple_paired'>;
+  onReconnect?: () => void;
   enabled?: boolean;
 }
 
 export default function useSocket(options: UseSocketOptions) {
   const {
     coupleId,
+    userId,
     tokenProvider,
     onPartnerAnswered,
     onAnswersRevealed,
     onPartnerTyping,
+    onCouplePaired,
+    onReconnect,
     enabled = true,
   } = options;
 
   const socketRef = useRef<Socket | null>(null);
 
   // Stable refs to avoid re-creating socket on handler changes
-  const handlersRef = useRef({ onPartnerAnswered, onAnswersRevealed, onPartnerTyping });
-  handlersRef.current = { onPartnerAnswered, onAnswersRevealed, onPartnerTyping };
+  const handlersRef = useRef({ onPartnerAnswered, onAnswersRevealed, onPartnerTyping, onCouplePaired, onReconnect });
+  handlersRef.current = { onPartnerAnswered, onAnswersRevealed, onPartnerTyping, onCouplePaired, onReconnect };
 
   const tokenProviderRef = useRef(tokenProvider);
   tokenProviderRef.current = tokenProvider;
 
   const connect = useCallback(async () => {
-    if (!coupleId || !enabled || !tokenProviderRef.current) return;
+    if (!enabled || !tokenProviderRef.current) return;
     if (socketRef.current?.connected) return;
 
     // Get fresh token
@@ -74,7 +86,12 @@ export default function useSocket(options: UseSocketOptions) {
     socketRef.current = socket;
 
     socket.on('connect', () => {
-      socket.emit('joinCoupleRoom', { coupleId });
+      if (userId) {
+        socket.emit('joinUserRoom', { userId });
+      }
+      if (coupleId) {
+        socket.emit('joinCoupleRoom', { coupleId });
+      }
     });
 
     socket.on('authenticated', () => {
@@ -93,6 +110,10 @@ export default function useSocket(options: UseSocketOptions) {
       handlersRef.current.onPartnerTyping?.(data);
     });
 
+    socket.on('couple_paired', (data: SocketEventMap['couple_paired']) => {
+      handlersRef.current.onCouplePaired?.(data);
+    });
+
     socket.on('error', (err: { message: string }) => {
       if (err.message === 'Invalid or expired token') {
         socket.disconnect();
@@ -100,9 +121,15 @@ export default function useSocket(options: UseSocketOptions) {
     });
 
     socket.io.on('reconnect', () => {
-      socket.emit('joinCoupleRoom', { coupleId });
+      if (userId) {
+        socket.emit('joinUserRoom', { userId });
+      }
+      if (coupleId) {
+        socket.emit('joinCoupleRoom', { coupleId });
+      }
+      handlersRef.current.onReconnect?.();
     });
-  }, [coupleId, enabled]);
+  }, [coupleId, userId, enabled]);
 
   const disconnect = useCallback(() => {
     if (socketRef.current) {

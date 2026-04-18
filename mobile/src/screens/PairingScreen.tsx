@@ -12,8 +12,10 @@ import {
   Keyboard,
 } from 'react-native';
 import * as Clipboard from 'expo-clipboard';
+import { useAuth } from '@clerk/clerk-expo';
 import api from '../api/client';
 import useAuthStore from '../store/useAuthStore';
+import useSocket from '../hooks/useSocket';
 import type { Couple } from '../types';
 
 type ScreenState = 'loading' | 'ready' | 'submitting';
@@ -59,6 +61,20 @@ export default function PairingScreen() {
 
   const isSubmitting = screenState === 'submitting';
   const submitLockRef = useRef(false);
+  const { getToken } = useAuth();
+
+  const handleCouplePaired = useCallback(async (data: { coupleId: string }) => {
+    console.log('Received real-time couple_paired event:', data);
+    await fetchUserData(); // Updates user state and store, triggering automatic navigation to DailyPrompt
+  }, [fetchUserData]);
+
+  useSocket({
+    coupleId: null,
+    userId: user?.id ?? null,
+    tokenProvider: () => getToken(),
+    onCouplePaired: handleCouplePaired,
+    enabled: !!user?.id && !user?.coupleId, // Only connect if waiting to be paired
+  });
 
   const fetchInviteCode = useCallback(async () => {
     setCodeLoadError(null);

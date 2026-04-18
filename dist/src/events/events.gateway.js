@@ -65,6 +65,7 @@ let EventsGateway = EventsGateway_1 = class EventsGateway {
                 await client.join(`couple_${payload.coupleId}`);
                 client.coupleId = payload.coupleId;
             }
+            await client.join(`user_${payload.sub}`);
             await this.redis.setWithExpiry(`online:${payload.sub}`, client.id, 86400);
             client.emit('authenticated', {
                 userId: payload.sub,
@@ -90,6 +91,14 @@ let EventsGateway = EventsGateway_1 = class EventsGateway {
             }
             this.logger.log(`Client disconnected: ${client.userId} (${client.id})`);
         }
+    }
+    async handleJoinUserRoom(client, data) {
+        if (!client.userId || client.userId !== data.userId) {
+            client.emit('error', { message: 'Not authenticated or invalid userId' });
+            return;
+        }
+        await client.join(`user_${data.userId}`);
+        this.logger.log(`${client.userId} joined user room: user_${data.userId}`);
     }
     async handleJoinCoupleRoom(client, data) {
         if (!client.userId) {
@@ -154,6 +163,7 @@ let EventsGateway = EventsGateway_1 = class EventsGateway {
                     this.server.to(roomName).emit('partner_answered', {
                         questionId: event.questionId,
                         bothAnswered: event.bothAnswered,
+                        answers: event.answers,
                         timestamp: event.timestamp,
                     });
                     break;
@@ -161,6 +171,14 @@ let EventsGateway = EventsGateway_1 = class EventsGateway {
                     this.server.to(roomName).emit('answers_revealed', {
                         questionId: event.questionId,
                         timestamp: event.timestamp,
+                    });
+                    break;
+                case 'COUPLE_PAIRED':
+                    this.server.to(`user_${event.user1Id}`).emit('couple_paired', {
+                        coupleId: event.coupleId,
+                    });
+                    this.server.to(`user_${event.user2Id}`).emit('couple_paired', {
+                        coupleId: event.coupleId,
                     });
                     break;
                 default:
@@ -228,6 +246,14 @@ __decorate([
     (0, websockets_1.WebSocketServer)(),
     __metadata("design:type", socket_io_1.Server)
 ], EventsGateway.prototype, "server", void 0);
+__decorate([
+    (0, websockets_1.SubscribeMessage)('joinUserRoom'),
+    __param(0, (0, websockets_1.ConnectedSocket)()),
+    __param(1, (0, websockets_1.MessageBody)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, Object]),
+    __metadata("design:returntype", Promise)
+], EventsGateway.prototype, "handleJoinUserRoom", null);
 __decorate([
     (0, websockets_1.SubscribeMessage)('joinCoupleRoom'),
     __param(0, (0, websockets_1.ConnectedSocket)()),

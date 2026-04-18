@@ -7,12 +7,16 @@ import {
 } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CoupleStatus, InviteStatus } from '@prisma/client';
+import { RedisService } from '../redis/redis.service';
 
 @Injectable()
 export class CouplesService {
   private readonly logger = new Logger(CouplesService.name);
 
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly redis: RedisService,
+  ) {}
 
   async joinCouple(inviteCode: string, userId: string) {
     const invite = await this.prisma.coupleInvite.findUnique({
@@ -116,6 +120,17 @@ export class CouplesService {
     });
 
     this.logger.log(`Couple created: ${couple.id} (${invite.senderId} + ${userId})`);
+
+    await this.redis.publish(
+      `couple_pairing`,
+      JSON.stringify({
+        type: 'COUPLE_PAIRED',
+        coupleId: couple.id,
+        user1Id: invite.senderId,
+        user2Id: userId,
+        timestamp: Date.now(),
+      })
+    );
 
     return {
       coupleId: couple.id,

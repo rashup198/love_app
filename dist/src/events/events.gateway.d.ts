@@ -20,6 +20,9 @@ export declare class EventsGateway implements OnGatewayInit, OnGatewayConnection
     afterInit(): Promise<void>;
     handleConnection(client: AuthenticatedSocket): Promise<void>;
     handleDisconnect(client: AuthenticatedSocket): Promise<void>;
+    handleJoinUserRoom(client: AuthenticatedSocket, data: {
+        userId: string;
+    }): Promise<void>;
     handleJoinCoupleRoom(client: AuthenticatedSocket, data: {
         coupleId: string;
     }): Promise<void>;

@@ -116,12 +116,12 @@ export default function DailyPromptScreen() {
         setDailyQuestion((prev) =>
           prev
             ? {
-                ...prev,
-                isRevealed: true,
-                currentUser: { hasAnswered: true, answerId: result.answerId },
-                partner: { hasAnswered: true },
-                answers: result.answers!,
-              }
+              ...prev,
+              isRevealed: true,
+              currentUser: { hasAnswered: true, answerId: result.answerId },
+              partner: { hasAnswered: true },
+              answers: result.answers!,
+            }
             : prev,
         );
         setPhase('revealed');
@@ -129,9 +129,9 @@ export default function DailyPromptScreen() {
         setDailyQuestion((prev) =>
           prev
             ? {
-                ...prev,
-                currentUser: { hasAnswered: true, answerId: result.answerId },
-              }
+              ...prev,
+              currentUser: { hasAnswered: true, answerId: result.answerId },
+            }
             : prev,
         );
         setPhase('waiting');
@@ -148,19 +148,28 @@ export default function DailyPromptScreen() {
   // Socket — real-time partner events
   // -----------------------------------------------------------------------
   const handlePartnerAnswered = useCallback(
-    (data: { questionId: string; bothAnswered: boolean }) => {
-      if (!dailyQuestion) return;
+    (data: { questionId: string; bothAnswered: boolean; answers?: any[] }) => {
+      if (!dailyQuestion || dailyQuestion.dailyQuestionId !== data.questionId) return;
 
-      if (data.bothAnswered) {
-        // Refetch to get both answers from the server
-        fetchDailyQuestion();
+      if (data.bothAnswered && data.answers) {
+        setDailyQuestion((prev) =>
+          prev
+            ? {
+              ...prev,
+              isRevealed: true,
+              partner: { hasAnswered: true },
+              answers: data.answers!,
+            }
+            : prev,
+        );
+        setPhase('revealed');
       } else {
         setDailyQuestion((prev) =>
           prev ? { ...prev, partner: { hasAnswered: true } } : prev,
         );
       }
     },
-    [dailyQuestion, fetchDailyQuestion],
+    [dailyQuestion],
   );
 
   const handleAnswersRevealed = useCallback(() => {
@@ -172,6 +181,7 @@ export default function DailyPromptScreen() {
     tokenProvider: () => getToken(),
     onPartnerAnswered: handlePartnerAnswered,
     onAnswersRevealed: handleAnswersRevealed,
+    onReconnect: fetchDailyQuestion,
     enabled: !!coupleId,
   });
 

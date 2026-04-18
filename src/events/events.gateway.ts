@@ -98,6 +98,8 @@ export class EventsGateway
         client.coupleId = payload.coupleId;
       }
 
+      await client.join(`user_${payload.sub}`);
+
       await this.redis.setWithExpiry(`online:${payload.sub}`, client.id, 86400);
 
       client.emit('authenticated', {
@@ -125,6 +127,19 @@ export class EventsGateway
       }
       this.logger.log(`Client disconnected: ${client.userId} (${client.id})`);
     }
+  }
+
+  @SubscribeMessage('joinUserRoom')
+  async handleJoinUserRoom(
+    @ConnectedSocket() client: AuthenticatedSocket,
+    @MessageBody() data: { userId: string },
+  ) {
+    if (!client.userId || client.userId !== data.userId) {
+      client.emit('error', { message: 'Not authenticated or invalid userId' });
+      return;
+    }
+    await client.join(`user_${data.userId}`);
+    this.logger.log(`${client.userId} joined user room: user_${data.userId}`);
   }
 
   @SubscribeMessage('joinCoupleRoom')
@@ -216,6 +231,7 @@ export class EventsGateway
           this.server.to(roomName).emit('partner_answered', {
             questionId: event.questionId,
             bothAnswered: event.bothAnswered,
+            answers: (event as any).answers,
             timestamp: event.timestamp,
           });
           break;
@@ -224,6 +240,15 @@ export class EventsGateway
           this.server.to(roomName).emit('answers_revealed', {
             questionId: event.questionId,
             timestamp: event.timestamp,
+          });
+          break;
+
+        case 'COUPLE_PAIRED':
+          this.server.to(`user_${(event as any).user1Id}`).emit('couple_paired', {
+            coupleId: (event as any).coupleId,
+          });
+          this.server.to(`user_${(event as any).user2Id}`).emit('couple_paired', {
+            coupleId: (event as any).coupleId,
           });
           break;
 
