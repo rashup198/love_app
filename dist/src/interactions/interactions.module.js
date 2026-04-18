@@ -13,12 +13,13 @@ const answer_service_1 = require("./answer.service");
 const reaction_service_1 = require("./reaction.service");
 const message_service_1 = require("./message.service");
 const couples_module_1 = require("../couples/couples.module");
+const events_module_1 = require("../events/events.module");
 let InteractionsModule = class InteractionsModule {
 };
 exports.InteractionsModule = InteractionsModule;
 exports.InteractionsModule = InteractionsModule = __decorate([
     (0, common_1.Module)({
-        imports: [couples_module_1.CouplesModule],
+        imports: [couples_module_1.CouplesModule, events_module_1.EventsModule],
         controllers: [interactions_controller_1.InteractionsController],
         providers: [answer_service_1.AnswerService, reaction_service_1.ReactionService, message_service_1.MessageService],
         exports: [answer_service_1.AnswerService],

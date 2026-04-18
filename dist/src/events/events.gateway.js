@@ -20,24 +20,15 @@ const socket_io_1 = require("socket.io");
 const clerk_sdk_node_1 = require("@clerk/clerk-sdk-node");
 const config_1 = require("@nestjs/config");
 const prisma_service_1 = require("../prisma/prisma.service");
-const redis_service_1 = require("../redis/redis.service");
 let EventsGateway = EventsGateway_1 = class EventsGateway {
-    constructor(config, prisma, redis) {
+    constructor(config, prisma) {
         this.config = config;
         this.prisma = prisma;
-        this.redis = redis;
         this.logger = new common_1.Logger(EventsGateway_1.name);
         this.connectedUsers = new Map();
-        this.processedMessages = new Map();
     }
-    async afterInit() {
-        await this.redis.subscribe('couple_*', (channel, message) => {
-            this.handleRedisMessage(channel, message);
-        });
-        this.deduplicationCleanupInterval = setInterval(() => {
-            this.cleanupProcessedMessages();
-        }, 60_000);
-        this.logger.log('WebSocket gateway initialized, Redis subscription active');
+    afterInit() {
+        this.logger.log('WebSocket gateway initialized with Redis Adapter');
     }
     async handleConnection(client) {
         try {
@@ -66,7 +57,6 @@ let EventsGateway = EventsGateway_1 = class EventsGateway {
                 client.coupleId = payload.coupleId;
             }
             await client.join(`user_${payload.sub}`);
-            await this.redis.setWithExpiry(`online:${payload.sub}`, client.id, 86400);
             client.emit('authenticated', {
                 userId: payload.sub,
                 coupleId: payload.coupleId ?? null,
@@ -86,7 +76,6 @@ let EventsGateway = EventsGateway_1 = class EventsGateway {
                 userSockets.delete(client.id);
                 if (userSockets.size === 0) {
                     this.connectedUsers.delete(client.userId);
-                    await this.redis.del(`online:${client.userId}`);
                 }
             }
             this.logger.log(`Client disconnected: ${client.userId} (${client.id})`);
@@ -149,47 +138,6 @@ let EventsGateway = EventsGateway_1 = class EventsGateway {
     handlePing(client) {
         client.emit('pong', { timestamp: Date.now() });
     }
-    handleRedisMessage(channel, message) {
-        try {
-            const event = JSON.parse(message);
-            const messageKey = `${channel}:${event.type}:${event.timestamp}`;
-            if (this.processedMessages.has(messageKey)) {
-                return;
-            }
-            this.processedMessages.set(messageKey, Date.now());
-            const roomName = channel;
-            switch (event.type) {
-                case 'PARTNER_ANSWERED':
-                    this.server.to(roomName).emit('partner_answered', {
-                        questionId: event.questionId,
-                        bothAnswered: event.bothAnswered,
-                        answers: event.answers,
-                        timestamp: event.timestamp,
-                    });
-                    break;
-                case 'ANSWERS_REVEALED':
-                    this.server.to(roomName).emit('answers_revealed', {
-                        questionId: event.questionId,
-                        timestamp: event.timestamp,
-                    });
-                    break;
-                case 'COUPLE_PAIRED':
-                    this.server.to(`user_${event.user1Id}`).emit('couple_paired', {
-                        coupleId: event.coupleId,
-                    });
-                    this.server.to(`user_${event.user2Id}`).emit('couple_paired', {
-                        coupleId: event.coupleId,
-                    });
-                    break;
-                default:
-                    this.server.to(roomName).emit(event.type.toLowerCase(), event);
-                    break;
-            }
-        }
-        catch (error) {
-            this.logger.error(`Failed to process Redis message on ${channel}`, error.message);
-        }
-    }
     extractToken(client) {
         const authToken = client.handshake.auth?.token;
         if (authToken && typeof authToken === 'string') {
@@ -215,21 +163,8 @@ let EventsGateway = EventsGateway_1 = class EventsGateway {
             return null;
         }
     }
-    cleanupProcessedMessages() {
-        const cutoff = Date.now() - 60_000;
-        for (const [key, timestamp] of this.processedMessages) {
-            if (timestamp < cutoff) {
-                this.processedMessages.delete(key);
-            }
-        }
-    }
     emitToUser(userId, event, payload) {
-        const socketIds = this.connectedUsers.get(userId);
-        if (socketIds) {
-            for (const socketId of socketIds) {
-                this.server.to(socketId).emit(event, payload);
-            }
-        }
+        this.server.to(`user_${userId}`).emit(event, payload);
     }
     emitToCouple(coupleId, event, payload) {
         this.server.to(`couple_${coupleId}`).emit(event, payload);
@@ -289,12 +224,11 @@ exports.EventsGateway = EventsGateway = EventsGateway_1 = __decorate([
     (0, websockets_1.WebSocketGateway)({
         cors: { origin: '*', credentials: true },
         namespace: '/ws',
-        transports: ['websocket', 'polling'],
+        transports: ['websocket'],
         pingInterval: 25000,
         pingTimeout: 10000,
     }),
     __metadata("design:paramtypes", [config_1.ConfigService,
-        prisma_service_1.PrismaService,
-        redis_service_1.RedisService])
+        prisma_service_1.PrismaService])
 ], EventsGateway);
 //# sourceMappingURL=events.gateway.js.map

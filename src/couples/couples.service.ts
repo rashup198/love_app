@@ -7,7 +7,7 @@ import {
 } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CoupleStatus, InviteStatus } from '@prisma/client';
-import { RedisService } from '../redis/redis.service';
+import { EventsGateway } from '../events/events.gateway';
 
 @Injectable()
 export class CouplesService {
@@ -15,7 +15,7 @@ export class CouplesService {
 
   constructor(
     private readonly prisma: PrismaService,
-    private readonly redis: RedisService,
+    private readonly eventsGateway: EventsGateway,
   ) {}
 
   async joinCouple(inviteCode: string, userId: string) {
@@ -121,16 +121,12 @@ export class CouplesService {
 
     this.logger.log(`Couple created: ${couple.id} (${invite.senderId} + ${userId})`);
 
-    await this.redis.publish(
-      `couple_pairing`,
-      JSON.stringify({
-        type: 'COUPLE_PAIRED',
-        coupleId: couple.id,
-        user1Id: invite.senderId,
-        user2Id: userId,
-        timestamp: Date.now(),
-      })
-    );
+    this.eventsGateway.emitToUser(invite.senderId, 'couple_paired', {
+      coupleId: couple.id,
+    });
+    this.eventsGateway.emitToUser(userId, 'couple_paired', {
+      coupleId: couple.id,
+    });
 
     return {
       coupleId: couple.id,

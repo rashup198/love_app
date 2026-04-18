@@ -14,11 +14,11 @@ exports.CouplesService = void 0;
 const common_1 = require("@nestjs/common");
 const prisma_service_1 = require("../prisma/prisma.service");
 const client_1 = require("@prisma/client");
-const redis_service_1 = require("../redis/redis.service");
+const events_gateway_1 = require("../events/events.gateway");
 let CouplesService = CouplesService_1 = class CouplesService {
-    constructor(prisma, redis) {
+    constructor(prisma, eventsGateway) {
         this.prisma = prisma;
-        this.redis = redis;
+        this.eventsGateway = eventsGateway;
         this.logger = new common_1.Logger(CouplesService_1.name);
     }
     async joinCouple(inviteCode, userId) {
@@ -107,13 +107,12 @@ let CouplesService = CouplesService_1 = class CouplesService {
             return newCouple;
         });
         this.logger.log(`Couple created: ${couple.id} (${invite.senderId} + ${userId})`);
-        await this.redis.publish(`couple_pairing`, JSON.stringify({
-            type: 'COUPLE_PAIRED',
+        this.eventsGateway.emitToUser(invite.senderId, 'couple_paired', {
             coupleId: couple.id,
-            user1Id: invite.senderId,
-            user2Id: userId,
-            timestamp: Date.now(),
-        }));
+        });
+        this.eventsGateway.emitToUser(userId, 'couple_paired', {
+            coupleId: couple.id,
+        });
         return {
             coupleId: couple.id,
             partnerId: invite.senderId,
@@ -215,6 +214,6 @@ exports.CouplesService = CouplesService;
 exports.CouplesService = CouplesService = CouplesService_1 = __decorate([
     (0, common_1.Injectable)(),
     __metadata("design:paramtypes", [prisma_service_1.PrismaService,
-        redis_service_1.RedisService])
+        events_gateway_1.EventsGateway])
 ], CouplesService);
 //# sourceMappingURL=couples.service.js.map

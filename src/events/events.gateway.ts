@@ -13,26 +13,18 @@ import { Server, Socket } from 'socket.io';
 import { verifyToken } from '@clerk/clerk-sdk-node';
 import { ConfigService } from '@nestjs/config';
 import { PrismaService } from '../prisma/prisma.service';
-import { RedisService } from '../redis/redis.service';
 
 interface AuthenticatedSocket extends Socket {
   userId?: string;
   coupleId?: string;
 }
 
-interface CoupleEvent {
-  type: string;
-  questionId?: string;
-  userId?: string;
-  partnerId?: string;
-  bothAnswered?: boolean;
-  timestamp?: number;
-}
+
 
 @WebSocketGateway({
   cors: { origin: '*', credentials: true },
   namespace: '/ws',
-  transports: ['websocket', 'polling'],
+  transports: ['websocket'],
   pingInterval: 25000,
   pingTimeout: 10000,
 })
@@ -44,25 +36,14 @@ export class EventsGateway
 
   private readonly logger = new Logger(EventsGateway.name);
   private readonly connectedUsers = new Map<string, Set<string>>();
-  private readonly processedMessages = new Map<string, number>();
-  private deduplicationCleanupInterval: ReturnType<typeof setInterval>;
 
   constructor(
     private readonly config: ConfigService,
     private readonly prisma: PrismaService,
-    private readonly redis: RedisService,
   ) {}
 
-  async afterInit() {
-    await this.redis.subscribe('couple_*', (channel: string, message: string) => {
-      this.handleRedisMessage(channel, message);
-    });
-
-    this.deduplicationCleanupInterval = setInterval(() => {
-      this.cleanupProcessedMessages();
-    }, 60_000);
-
-    this.logger.log('WebSocket gateway initialized, Redis subscription active');
+  afterInit() {
+    this.logger.log('WebSocket gateway initialized with Redis Adapter');
   }
 
   async handleConnection(client: AuthenticatedSocket) {
@@ -100,8 +81,6 @@ export class EventsGateway
 
       await client.join(`user_${payload.sub}`);
 
-      await this.redis.setWithExpiry(`online:${payload.sub}`, client.id, 86400);
-
       client.emit('authenticated', {
         userId: payload.sub,
         coupleId: payload.coupleId ?? null,
@@ -122,7 +101,6 @@ export class EventsGateway
         userSockets.delete(client.id);
         if (userSockets.size === 0) {
           this.connectedUsers.delete(client.userId);
-          await this.redis.del(`online:${client.userId}`);
         }
       }
       this.logger.log(`Client disconnected: ${client.userId} (${client.id})`);
@@ -214,52 +192,7 @@ export class EventsGateway
     client.emit('pong', { timestamp: Date.now() });
   }
 
-  private handleRedisMessage(channel: string, message: string) {
-    try {
-      const event: CoupleEvent = JSON.parse(message);
 
-      const messageKey = `${channel}:${event.type}:${event.timestamp}`;
-      if (this.processedMessages.has(messageKey)) {
-        return;
-      }
-      this.processedMessages.set(messageKey, Date.now());
-
-      const roomName = channel;
-
-      switch (event.type) {
-        case 'PARTNER_ANSWERED':
-          this.server.to(roomName).emit('partner_answered', {
-            questionId: event.questionId,
-            bothAnswered: event.bothAnswered,
-            answers: (event as any).answers,
-            timestamp: event.timestamp,
-          });
-          break;
-
-        case 'ANSWERS_REVEALED':
-          this.server.to(roomName).emit('answers_revealed', {
-            questionId: event.questionId,
-            timestamp: event.timestamp,
-          });
-          break;
-
-        case 'COUPLE_PAIRED':
-          this.server.to(`user_${(event as any).user1Id}`).emit('couple_paired', {
-            coupleId: (event as any).coupleId,
-          });
-          this.server.to(`user_${(event as any).user2Id}`).emit('couple_paired', {
-            coupleId: (event as any).coupleId,
-          });
-          break;
-
-        default:
-          this.server.to(roomName).emit(event.type.toLowerCase(), event);
-          break;
-      }
-    } catch (error) {
-      this.logger.error(`Failed to process Redis message on ${channel}`, (error as Error).message);
-    }
-  }
 
   private extractToken(client: Socket): string | null {
     const authToken = client.handshake.auth?.token;
@@ -289,22 +222,10 @@ export class EventsGateway
     }
   }
 
-  private cleanupProcessedMessages() {
-    const cutoff = Date.now() - 60_000;
-    for (const [key, timestamp] of this.processedMessages) {
-      if (timestamp < cutoff) {
-        this.processedMessages.delete(key);
-      }
-    }
-  }
+
 
   emitToUser(userId: string, event: string, payload: any) {
-    const socketIds = this.connectedUsers.get(userId);
-    if (socketIds) {
-      for (const socketId of socketIds) {
-        this.server.to(socketId).emit(event, payload);
-      }
-    }
+    this.server.to(`user_${userId}`).emit(event, payload);
   }
 
   emitToCouple(coupleId: string, event: string, payload: any) {

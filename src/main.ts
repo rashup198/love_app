@@ -3,6 +3,7 @@ import { ValidationPipe, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import helmet from 'helmet';
 import { AppModule } from './app.module';
+import { RedisIoAdapter } from './redis/redis-io.adapter';
 
 async function bootstrap() {
   const logger = new Logger('Bootstrap');
@@ -11,6 +12,10 @@ async function bootstrap() {
   });
 
   const config = app.get(ConfigService);
+
+  const redisIoAdapter = new RedisIoAdapter(app);
+  await redisIoAdapter.connectToRedis(config.get<string>('REDIS_URL')!);
+  app.useWebSocketAdapter(redisIoAdapter);
 
   app.use(helmet());
 

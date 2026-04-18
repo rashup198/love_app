@@ -150,17 +150,6 @@ export class InviteService {
 
     await this.redis.del(`invite:${inviteCode}`);
 
-    await this.redis.publish(
-      `couple_pairing`,
-      JSON.stringify({
-        type: 'COUPLE_PAIRED',
-        coupleId: couple.id,
-        user1Id: invite.senderId,
-        user2Id: receiverId,
-        timestamp: Date.now(),
-      })
-    );
-
     return {
       coupleId: couple.id,
       partnerId: invite.senderId,

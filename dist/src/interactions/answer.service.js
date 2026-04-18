@@ -13,13 +13,13 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.AnswerService = void 0;
 const common_1 = require("@nestjs/common");
 const prisma_service_1 = require("../prisma/prisma.service");
-const redis_service_1 = require("../redis/redis.service");
+const events_gateway_1 = require("../events/events.gateway");
 const streak_service_1 = require("../couples/streak.service");
 const client_1 = require("@prisma/client");
 let AnswerService = AnswerService_1 = class AnswerService {
-    constructor(prisma, redis, streakService) {
+    constructor(prisma, eventsGateway, streakService) {
         this.prisma = prisma;
-        this.redis = redis;
+        this.eventsGateway = eventsGateway;
         this.streakService = streakService;
         this.logger = new common_1.Logger(AnswerService_1.name);
     }
@@ -100,8 +100,7 @@ let AnswerService = AnswerService_1 = class AnswerService {
             return { answer, allAnswers, bothAnswered };
         });
         const partnerId = isUserA ? couple.userBId : couple.userAId;
-        await this.redis.publish(`couple_${couple.id}`, JSON.stringify({
-            type: 'PARTNER_ANSWERED',
+        this.eventsGateway.emitToCouple(couple.id, 'partner_answered', {
             questionId: dailyQuestionId,
             userId,
             partnerId,
@@ -113,7 +112,7 @@ let AnswerService = AnswerService_1 = class AnswerService {
                 createdAt: a.createdAt,
             })) : undefined,
             timestamp: Date.now(),
-        }));
+        });
         if (result.bothAnswered) {
             this.streakService.recordInteraction(couple.id).catch((err) => {
                 this.logger.error(`Failed to record streak for couple ${couple.id}`, err);
@@ -181,11 +180,10 @@ let AnswerService = AnswerService_1 = class AnswerService {
                 data: { isRevealed: true },
             }),
         ]);
-        await this.redis.publish(`couple_${couple.id}`, JSON.stringify({
-            type: 'ANSWERS_REVEALED',
+        this.eventsGateway.emitToCouple(couple.id, 'answers_revealed', {
             questionId: dailyQuestionId,
             timestamp: Date.now(),
-        }));
+        });
         return {
             answers: dailyQuestion.answers.map((a) => ({
                 id: a.id,
@@ -204,7 +202,7 @@ exports.AnswerService = AnswerService;
 exports.AnswerService = AnswerService = AnswerService_1 = __decorate([
     (0, common_1.Injectable)(),
     __metadata("design:paramtypes", [prisma_service_1.PrismaService,
-        redis_service_1.RedisService,
+        events_gateway_1.EventsGateway,
         streak_service_1.StreakService])
 ], AnswerService);
 //# sourceMappingURL=answer.service.js.map

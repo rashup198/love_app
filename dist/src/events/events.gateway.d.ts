@@ -2,7 +2,6 @@ import { OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect } from '@nestjs
 import { Server, Socket } from 'socket.io';
 import { ConfigService } from '@nestjs/config';
 import { PrismaService } from '../prisma/prisma.service';
-import { RedisService } from '../redis/redis.service';
 interface AuthenticatedSocket extends Socket {
     userId?: string;
     coupleId?: string;
@@ -10,14 +9,11 @@ interface AuthenticatedSocket extends Socket {
 export declare class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
     private readonly config;
     private readonly prisma;
-    private readonly redis;
     server: Server;
     private readonly logger;
     private readonly connectedUsers;
-    private readonly processedMessages;
-    private deduplicationCleanupInterval;
-    constructor(config: ConfigService, prisma: PrismaService, redis: RedisService);
-    afterInit(): Promise<void>;
+    constructor(config: ConfigService, prisma: PrismaService);
+    afterInit(): void;
     handleConnection(client: AuthenticatedSocket): Promise<void>;
     handleDisconnect(client: AuthenticatedSocket): Promise<void>;
     handleJoinUserRoom(client: AuthenticatedSocket, data: {
@@ -33,10 +29,8 @@ export declare class EventsGateway implements OnGatewayInit, OnGatewayConnection
         coupleId: string;
     }): void;
     handlePing(client: AuthenticatedSocket): void;
-    private handleRedisMessage;
     private extractToken;
     private verifyToken;
-    private cleanupProcessedMessages;
     emitToUser(userId: string, event: string, payload: any): void;
     emitToCouple(coupleId: string, event: string, payload: any): void;
     isUserOnline(userId: string): boolean;

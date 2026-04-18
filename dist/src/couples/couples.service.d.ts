@@ -1,10 +1,10 @@
 import { PrismaService } from '../prisma/prisma.service';
-import { RedisService } from '../redis/redis.service';
+import { EventsGateway } from '../events/events.gateway';
 export declare class CouplesService {
     private readonly prisma;
-    private readonly redis;
+    private readonly eventsGateway;
     private readonly logger;
-    constructor(prisma: PrismaService, redis: RedisService);
+    constructor(prisma: PrismaService, eventsGateway: EventsGateway);
     joinCouple(inviteCode: string, userId: string): Promise<{
         coupleId: string;
         partnerId: string;

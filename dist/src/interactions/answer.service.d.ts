@@ -1,5 +1,5 @@
 import { PrismaService } from '../prisma/prisma.service';
-import { RedisService } from '../redis/redis.service';
+import { EventsGateway } from '../events/events.gateway';
 import { StreakService } from '../couples/streak.service';
 export interface AnswerResult {
     status: 'WAITING_FOR_PARTNER' | 'REVEALED';
@@ -13,10 +13,10 @@ export interface AnswerResult {
 }
 export declare class AnswerService {
     private readonly prisma;
-    private readonly redis;
+    private readonly eventsGateway;
     private readonly streakService;
     private readonly logger;
-    constructor(prisma: PrismaService, redis: RedisService, streakService: StreakService);
+    constructor(prisma: PrismaService, eventsGateway: EventsGateway, streakService: StreakService);
     submitAnswer(userId: string, dailyQuestionId: string, text: string): Promise<AnswerResult>;
     revealAnswers(userId: string, dailyQuestionId: string): Promise<{
         answers: {

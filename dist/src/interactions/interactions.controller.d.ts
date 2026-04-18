@@ -18,45 +18,45 @@ export declare class InteractionsController {
         }[];
     }>;
     addReaction(user: JwtPayload, dto: AddReactionDto): Promise<{
-        type: import(".prisma/client").$Enums.ReactionType;
         id: string;
         createdAt: Date;
         userId: string;
         answerId: string;
+        type: import(".prisma/client").$Enums.ReactionType;
     }>;
     removeReaction(user: JwtPayload, answerId: string): Promise<{
         removed: boolean;
     }>;
     sendMessage(user: JwtPayload, dto: SendMessageDto): Promise<{
-        type: import(".prisma/client").$Enums.MessageType;
         id: string;
+        coupleId: string;
         createdAt: Date;
         deletedAt: Date | null;
-        senderId: string;
-        coupleId: string;
+        type: import(".prisma/client").$Enums.MessageType;
         content: string;
         isRead: boolean;
         readAt: Date | null;
+        senderId: string;
     }>;
     getMessages(coupleId: string, page?: string, limit?: string): Promise<{
         items: ({
             sender: {
+                id: string;
                 profile: {
                     displayName: string;
                     avatarUrl: string | null;
                 } | null;
-                id: string;
             };
         } & {
-            type: import(".prisma/client").$Enums.MessageType;
             id: string;
+            coupleId: string;
             createdAt: Date;
             deletedAt: Date | null;
-            senderId: string;
-            coupleId: string;
+            type: import(".prisma/client").$Enums.MessageType;
             content: string;
             isRead: boolean;
             readAt: Date | null;
+            senderId: string;
         })[];
         pagination: {
             page: number;

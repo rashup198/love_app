@@ -6,7 +6,7 @@ import {
   Logger,
 } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { RedisService } from '../redis/redis.service';
+import { EventsGateway } from '../events/events.gateway';
 import { StreakService } from '../couples/streak.service';
 import { DailyQuestionStatus } from '@prisma/client';
 
@@ -27,7 +27,7 @@ export class AnswerService {
 
   constructor(
     private readonly prisma: PrismaService,
-    private readonly redis: RedisService,
+    private readonly eventsGateway: EventsGateway,
     private readonly streakService: StreakService,
   ) {}
 
@@ -130,23 +130,19 @@ export class AnswerService {
 
     const partnerId = isUserA ? couple.userBId : couple.userAId;
 
-    await this.redis.publish(
-      `couple_${couple.id}`,
-      JSON.stringify({
-        type: 'PARTNER_ANSWERED',
-        questionId: dailyQuestionId,
-        userId,
-        partnerId,
-        bothAnswered: result.bothAnswered,
-        answers: result.bothAnswered ? result.allAnswers.map((a) => ({
-          id: a.id,
-          userId: a.userId,
-          text: a.text,
-          createdAt: a.createdAt,
-        })) : undefined,
-        timestamp: Date.now(),
-      }),
-    );
+    this.eventsGateway.emitToCouple(couple.id, 'partner_answered', {
+      questionId: dailyQuestionId,
+      userId,
+      partnerId,
+      bothAnswered: result.bothAnswered,
+      answers: result.bothAnswered ? result.allAnswers.map((a) => ({
+        id: a.id,
+        userId: a.userId,
+        text: a.text,
+        createdAt: a.createdAt,
+      })) : undefined,
+      timestamp: Date.now(),
+    });
 
     if (result.bothAnswered) {
       this.streakService.recordInteraction(couple.id).catch((err) => {
@@ -226,14 +222,10 @@ export class AnswerService {
       }),
     ]);
 
-    await this.redis.publish(
-      `couple_${couple.id}`,
-      JSON.stringify({
-        type: 'ANSWERS_REVEALED',
-        questionId: dailyQuestionId,
-        timestamp: Date.now(),
-      }),
-    );
+    this.eventsGateway.emitToCouple(couple.id, 'answers_revealed', {
+      questionId: dailyQuestionId,
+      timestamp: Date.now(),
+    });
 
     return {
       answers: dailyQuestion.answers.map((a) => ({
