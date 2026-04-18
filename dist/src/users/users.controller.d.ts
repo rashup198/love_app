@@ -5,26 +5,25 @@ export declare class UsersController {
     private readonly usersService;
     constructor(usersService: UsersService);
     getProfile(user: JwtPayload): Promise<{
-        id: string;
-        email: string;
-        isOnboarded: boolean;
-        lastActiveAt: Date | null;
-        profile: {
+        user: {
             id: string;
+            email: string;
+            isOnboarded: boolean;
+            coupleId: string | null;
+            inviteCode: string | null;
+        };
+        couple: {
+            id: string;
+            status: import(".prisma/client").$Enums.CoupleStatus;
+            partner: {
+                id: string;
+                displayName: string | null;
+                avatarUrl: string | null;
+            };
+            currentStreak: number;
+            longestStreak: number;
+            totalInteractions: number;
             createdAt: Date;
-            updatedAt: Date;
-            displayName: string;
-            avatarUrl: string | null;
-            dateOfBirth: Date | null;
-            gender: import(".prisma/client").$Enums.Gender | null;
-            bio: string | null;
-            timezone: string;
-            userId: string;
-        } | null;
-        subscription: {
-            tier: import(".prisma/client").$Enums.SubscriptionTier;
-            status: import(".prisma/client").$Enums.SubscriptionStatus;
-            expiresAt: Date;
         } | null;
     }>;
     updateProfile(user: JwtPayload, dto: UpdateProfileDto): Promise<{

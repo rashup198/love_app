@@ -75,14 +75,19 @@ const useAppStore = create<AppState>((set, get) => ({
     hydrationPromise = (async () => {
       set({ isHydrating: true });
       try {
-        const { data } = await api.get<{
+        const result = await api.get<{
           user: User;
           couple: Couple | null;
         }>('/users/me');
 
+        // api.get already unwraps the { success, data } envelope via interceptor
+        // so `result` IS the data object itself
+        const userData = (result as any).user ?? result;
+        const coupleData = (result as any).couple ?? null;
+
         set({
-          user: data.user,
-          couple: data.couple,
+          user: userData,
+          couple: coupleData,
           isHydrated: true,
           isHydrating: false,
         });

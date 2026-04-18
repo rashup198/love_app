@@ -42,19 +42,55 @@ export class UsersService {
       throw new NotFoundException('User not found');
     }
 
+    // Fetch active couple + partner info
+    const couple = await this.prisma.couple.findFirst({
+      where: {
+        OR: [{ userAId: userId }, { userBId: userId }],
+        deletedAt: null,
+        status: 'ACTIVE',
+      },
+      include: {
+        userA: { include: { profile: true } },
+        userB: { include: { profile: true } },
+      },
+    });
+
+    let coupleData = null;
+    let coupleId: string | null = null;
+
+    if (couple) {
+      coupleId = couple.id;
+      const partner = couple.userAId === userId ? couple.userB : couple.userA;
+      coupleData = {
+        id: couple.id,
+        status: couple.status,
+        partner: {
+          id: partner.id,
+          displayName: partner.profile?.displayName ?? null,
+          avatarUrl: partner.profile?.avatarUrl ?? null,
+        },
+        currentStreak: couple.currentStreak,
+        longestStreak: couple.longestStreak,
+        totalInteractions: couple.totalInteractions,
+        createdAt: couple.createdAt,
+      };
+    }
+
+    // Look up any pending invite code for this user
+    const pendingInvite = await this.prisma.coupleInvite.findFirst({
+      where: { senderId: userId, status: 'PENDING' },
+      select: { inviteCode: true },
+    });
+
     return {
-      id: user.id,
-      email: user.email,
-      isOnboarded: user.isOnboarded,
-      lastActiveAt: user.lastActiveAt,
-      profile: user.profile,
-      subscription: user.subscription
-        ? {
-            tier: user.subscription.plan.tier,
-            status: user.subscription.status,
-            expiresAt: user.subscription.currentPeriodEnd,
-          }
-        : null,
+      user: {
+        id: user.id,
+        email: user.email,
+        isOnboarded: user.isOnboarded,
+        coupleId,
+        inviteCode: pendingInvite?.inviteCode ?? null,
+      },
+      couple: coupleData,
     };
   }
 

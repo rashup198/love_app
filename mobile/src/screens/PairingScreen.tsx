@@ -34,9 +34,21 @@ const CODE_MIN_LENGTH = 6;
 const CODE_MAX_LENGTH = 8;
 const CODE_PATTERN = /^[A-Z0-9]+$/;
 
+const ALREADY_IN_COUPLE_PATTERNS = [
+  'already in a couple',
+  'already paired',
+  'conflict',
+];
+
+function isAlreadyInCoupleError(message: string): boolean {
+  const lower = message.toLowerCase();
+  return ALREADY_IN_COUPLE_PATTERNS.some((p) => lower.includes(p));
+}
+
 export default function PairingScreen() {
   const user = useAuthStore((s) => s.user);
   const setCouple = useAuthStore((s) => s.setCouple);
+  const fetchUserData = useAuthStore((s) => s.fetchUserData);
 
   const [inviteCode, setInviteCode] = useState<string | null>(null);
   const [partnerCode, setPartnerCode] = useState('');
@@ -54,9 +66,16 @@ export default function PairingScreen() {
       const result = await api.post<InviteCodeResponse>('/couples/invite-code');
       setInviteCode(result.inviteCode);
     } catch (err: any) {
-      setCodeLoadError(err.message || 'Failed to load invite code');
+      const msg = err.message || 'Failed to load invite code';
+      // If backend says "already in a couple", re-hydrate store so AppIndex navigates away
+      if (isAlreadyInCoupleError(msg)) {
+        console.log('PairingScreen: already in couple, re-fetching user data...');
+        await fetchUserData();
+        return;
+      }
+      setCodeLoadError(msg);
     }
-  }, []);
+  }, [fetchUserData]);
 
   useEffect(() => {
     let mounted = true;
@@ -134,15 +153,21 @@ export default function PairingScreen() {
         createdAt: result.createdAt,
       };
 
+      // Immediately update store — AppIndex will swap to DailyPromptScreen
       setCouple(couple);
-      Alert.alert('Paired! 💕', 'You are now connected with your partner.');
     } catch (err: any) {
-      setError(err.message || 'Failed to join couple');
+      const msg = err.message || 'Failed to join couple';
+      // If already paired (race condition), just re-hydrate
+      if (isAlreadyInCoupleError(msg)) {
+        await fetchUserData();
+        return;
+      }
+      setError(msg);
       setScreenState('ready');
     } finally {
       submitLockRef.current = false;
     }
-  }, [partnerCode, validateCode, setCouple]);
+  }, [partnerCode, validateCode, setCouple, fetchUserData]);
 
   // --- Loading state ---
   if (screenState === 'loading') {

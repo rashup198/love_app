@@ -1,7 +1,6 @@
 import { useEffect, useRef, useCallback } from 'react';
 import { io, Socket } from 'socket.io-client';
 import { AppState, AppStateStatus } from 'react-native';
-import useAuthStore from '../store/useAuthStore';
 import ENV from '../config';
 
 interface SocketEventMap {
@@ -15,6 +14,7 @@ type EventHandler<T extends EventName> = (data: SocketEventMap[T]) => void;
 
 interface UseSocketOptions {
   coupleId: string | null;
+  tokenProvider?: () => Promise<string | null>;
   onPartnerAnswered?: EventHandler<'partner_answered'>;
   onAnswersRevealed?: EventHandler<'answers_revealed'>;
   onPartnerTyping?: EventHandler<'partner_typing'>;
@@ -24,6 +24,7 @@ interface UseSocketOptions {
 export default function useSocket(options: UseSocketOptions) {
   const {
     coupleId,
+    tokenProvider,
     onPartnerAnswered,
     onAnswersRevealed,
     onPartnerTyping,
@@ -31,15 +32,27 @@ export default function useSocket(options: UseSocketOptions) {
   } = options;
 
   const socketRef = useRef<Socket | null>(null);
-  const accessToken = useAuthStore((s) => s.accessToken);
 
   // Stable refs to avoid re-creating socket on handler changes
   const handlersRef = useRef({ onPartnerAnswered, onAnswersRevealed, onPartnerTyping });
   handlersRef.current = { onPartnerAnswered, onAnswersRevealed, onPartnerTyping };
 
-  const connect = useCallback(() => {
-    if (!accessToken || !coupleId || !enabled) return;
+  const tokenProviderRef = useRef(tokenProvider);
+  tokenProviderRef.current = tokenProvider;
+
+  const connect = useCallback(async () => {
+    if (!coupleId || !enabled || !tokenProviderRef.current) return;
     if (socketRef.current?.connected) return;
+
+    // Get fresh token
+    let token: string | null = null;
+    try {
+      token = await tokenProviderRef.current();
+    } catch (e) {
+      console.warn('useSocket: failed to get token for socket auth', e);
+      return;
+    }
+    if (!token) return;
 
     // Clean up any dangling socket
     if (socketRef.current) {
@@ -48,7 +61,7 @@ export default function useSocket(options: UseSocketOptions) {
     }
 
     const socket = io(ENV.WS_URL, {
-      auth: { token: accessToken },
+      auth: { token },
       transports: ['websocket'],
       reconnection: true,
       reconnectionAttempts: 15,
@@ -89,7 +102,7 @@ export default function useSocket(options: UseSocketOptions) {
     socket.io.on('reconnect', () => {
       socket.emit('joinCoupleRoom', { coupleId });
     });
-  }, [accessToken, coupleId, enabled]);
+  }, [coupleId, enabled]);
 
   const disconnect = useCallback(() => {
     if (socketRef.current) {
@@ -127,3 +140,4 @@ export default function useSocket(options: UseSocketOptions) {
 
   return { disconnect, emitTyping };
 }
+

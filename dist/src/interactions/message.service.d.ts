@@ -10,8 +10,8 @@ export declare class MessageService {
         id: string;
         createdAt: Date;
         deletedAt: Date | null;
-        coupleId: string;
         senderId: string;
+        coupleId: string;
         content: string;
         isRead: boolean;
         readAt: Date | null;
@@ -30,8 +30,8 @@ export declare class MessageService {
             id: string;
             createdAt: Date;
             deletedAt: Date | null;
-            coupleId: string;
             senderId: string;
+            coupleId: string;
             content: string;
             isRead: boolean;
             readAt: Date | null;

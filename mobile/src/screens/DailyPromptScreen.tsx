@@ -12,6 +12,7 @@ import {
   Keyboard,
   RefreshControl,
 } from 'react-native';
+import { useAuth } from '@clerk/clerk-expo';
 import api from '../api/client';
 import useAuthStore, { selectCoupleId } from '../store/useAuthStore';
 import useSocket from '../hooks/useSocket';
@@ -34,6 +35,7 @@ type ScreenPhase =
 // Component
 // ---------------------------------------------------------------------------
 export default function DailyPromptScreen() {
+  const { getToken } = useAuth();
   const userId = useAuthStore((s) => s.user?.id ?? null);
   const coupleId = useAuthStore(selectCoupleId);
 
@@ -167,6 +169,7 @@ export default function DailyPromptScreen() {
 
   useSocket({
     coupleId,
+    tokenProvider: () => getToken(),
     onPartnerAnswered: handlePartnerAnswered,
     onAnswersRevealed: handleAnswersRevealed,
     enabled: !!coupleId,

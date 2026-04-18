@@ -37,13 +37,13 @@ export declare class CouplesController {
         updatedAt: Date;
         deletedAt: Date | null;
         status: import(".prisma/client").$Enums.CoupleStatus;
+        userAId: string;
+        userBId: string;
         relationshipStartDate: Date | null;
         currentStreak: number;
         longestStreak: number;
         lastInteractionDate: Date | null;
         totalInteractions: number;
-        userAId: string;
-        userBId: string;
     }>;
     dissolveCouple(user: JwtPayload): Promise<{
         dissolved: boolean;
