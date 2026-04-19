@@ -73,7 +73,7 @@ export default function PairingScreen() {
     userId: user?.id ?? null,
     tokenProvider: () => getToken(),
     onCouplePaired: handleCouplePaired,
-    enabled: !!user?.id && !user?.coupleId, // Only connect if waiting to be paired
+    enabled: !!user?.id && !user?.coupleId, // Only connect if waiting to be patired
   });
 
   const fetchInviteCode = useCallback(async () => {

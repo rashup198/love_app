@@ -30,17 +30,17 @@ export declare class CouplesService {
     getPartnerId(userId: string): Promise<string | null>;
     updateRelationshipDate(userId: string, startDate: string): Promise<{
         id: string;
+        createdAt: Date;
+        updatedAt: Date;
+        deletedAt: Date | null;
         status: import(".prisma/client").$Enums.CoupleStatus;
+        userAId: string;
+        userBId: string;
         relationshipStartDate: Date | null;
         currentStreak: number;
         longestStreak: number;
         lastInteractionDate: Date | null;
         totalInteractions: number;
-        createdAt: Date;
-        updatedAt: Date;
-        deletedAt: Date | null;
-        userAId: string;
-        userBId: string;
     }>;
     dissolveCouple(userId: string): Promise<{
         dissolved: boolean;

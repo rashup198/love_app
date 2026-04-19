@@ -76,26 +76,28 @@ export default function useSocket(options: UseSocketOptions) {
       auth: { token },
       transports: ['websocket'],
       reconnection: true,
-      reconnectionAttempts: 15,
-      reconnectionDelay: 1_000,
-      reconnectionDelayMax: 15_000,
-      timeout: 15_000,
+      reconnectionAttempts: 20,
+      reconnectionDelay: 2_000,
+      reconnectionDelayMax: 30_000,
+      randomizationFactor: 0.5, // Jitter to prevent thundering herd
+      timeout: 20_000,
       forceNew: true,
     });
 
     socketRef.current = socket;
 
     socket.on('connect', () => {
+      console.log('Socket connected successfully, waiting for authentication...');
+    });
+
+    socket.on('authenticated', () => {
+      console.log('Socket authenticated, joining rooms...');
       if (userId) {
         socket.emit('joinUserRoom', { userId });
       }
       if (coupleId) {
         socket.emit('joinCoupleRoom', { coupleId });
       }
-    });
-
-    socket.on('authenticated', () => {
-      // Acknowledged — no-op
     });
 
     socket.on('partner_answered', (data: SocketEventMap['partner_answered']) => {
@@ -121,12 +123,7 @@ export default function useSocket(options: UseSocketOptions) {
     });
 
     socket.io.on('reconnect', () => {
-      if (userId) {
-        socket.emit('joinUserRoom', { userId });
-      }
-      if (coupleId) {
-        socket.emit('joinCoupleRoom', { coupleId });
-      }
+      console.log('Socket reconnected successfully');
       handlersRef.current.onReconnect?.();
     });
   }, [coupleId, userId, enabled]);
